@@ -1,0 +1,64 @@
+<script>
+  (function () {
+    const root = document.documentElement;
+    const storage = window.localStorage;
+
+    function applyColorMode(mode) {
+      const effective = mode === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : mode;
+      root.setAttribute('data-color-mode', effective);
+      storage.setItem('color-mode', mode);
+      const select = document.getElementById('color-mode-toggle');
+      if (select && select.value !== mode) {
+        select.value = mode;
+      }
+    }
+
+    function applyFontScale(scale) {
+      const allowed = (root.dataset.fontChoices || '').split(',');
+      const value = allowed.includes(scale) ? scale : '{{ site.Params.fontSize.default | default "md" }}';
+      root.setAttribute('data-font-scale', value);
+      storage.setItem('font-scale', value);
+      const select = document.getElementById('font-scale-toggle');
+      if (select && select.value !== value) {
+        select.value = value;
+      }
+    }
+
+    const savedMode = storage.getItem('color-mode') || '{{ site.Params.color.mode | default "auto" }}';
+    applyColorMode(savedMode);
+    const savedFont = storage.getItem('font-scale') || '{{ site.Params.fontSize.default | default "md" }}';
+    applyFontScale(savedFont);
+
+    const modeSelect = document.getElementById('color-mode-toggle');
+    if (modeSelect) {
+      modeSelect.value = savedMode;
+      modeSelect.addEventListener('change', (event) => {
+        applyColorMode(event.target.value);
+      });
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+        const stored = storage.getItem('color-mode') || 'auto';
+        if (stored === 'auto') {
+          applyColorMode('auto');
+        }
+      });
+    }
+
+    const fontSelect = document.getElementById('font-scale-toggle');
+    if (fontSelect) {
+      fontSelect.addEventListener('change', (event) => applyFontScale(event.target.value));
+    }
+
+    const langSelect = document.getElementById('language-switcher');
+    if (langSelect) {
+      langSelect.addEventListener('change', (event) => {
+        window.location.href = event.target.value;
+      });
+    }
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').catch(() => {});
+      });
+    }
+  })();
+</script>

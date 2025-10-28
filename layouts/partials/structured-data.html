@@ -1,0 +1,54 @@
+{{ $page := .Page }}
+{{ $site := $page.Site }}
+{{ $params := $site.Params }}
+{{ $author := $params.author }}
+{{ $image := .Image }}
+{{ $description := .Description | default $params.description }}
+
+{{ $person := dict
+  "@context" "https://schema.org"
+  "@type" "Person"
+  "name" $author.name
+  "jobTitle" $author.jobTitle
+  "url" ($author.url | default $site.BaseURL)
+  "email" $author.email
+  "address" $author.location
+  "sameAs" $author.sameAs
+}}
+
+<script type="application/ld+json">{{ $person | jsonify }}</script>
+
+{{ if $page.IsPage }}
+  {{ $article := dict
+    "@context" "https://schema.org"
+    "@type" "BlogPosting"
+    "headline" $page.Title
+    "description" $description
+    "datePublished" ($page.Date | time.Format "2006-01-02T15:04:05Z07:00")
+    "dateModified" ($page.Lastmod | time.Format "2006-01-02T15:04:05Z07:00")
+    "author" (slice (dict "@type" "Person" "name" $author.name))
+    "publisher" (dict "@type" "Organization" "name" $author.name)
+    "image" (cond (not (eq $image "")) $image nil)
+    "mainEntityOfPage" (dict "@type" "WebPage" "@id" $page.Permalink)
+  }}
+  <script type="application/ld+json">{{ $article | jsonify }}</script>
+{{ end }}
+
+{{ if or $page.IsPage $page.IsSection }}
+  {{ $position := 1 }}
+  {{ $items := slice (dict "@type" "ListItem" "position" $position "name" $site.Title "item" $site.BaseURL) }}
+  {{ $position = add $position 1 }}
+  {{ $ancestors := $page.Ancestors | default (slice) }}
+  {{ range $ancestors.Reverse }}
+    {{ $items = $items | append (dict "@type" "ListItem" "position" $position "name" .Title "item" .Permalink) }}
+    {{ $position = add $position 1 }}
+  {{ end }}
+  {{ $title := cond (ne ($page.Title | default "") "") $page.Title $site.Title }}
+  {{ $items = $items | append (dict "@type" "ListItem" "position" $position "name" $title "item" $page.Permalink) }}
+  {{ $breadcrumbData := dict
+      "@context" "https://schema.org"
+      "@type" "BreadcrumbList"
+      "itemListElement" $items
+  }}
+  <script type="application/ld+json">{{ $breadcrumbData | jsonify }}</script>
+{{ end }}

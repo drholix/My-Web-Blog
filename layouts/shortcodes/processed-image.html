@@ -1,0 +1,52 @@
+{{ $src := .Get "src" }}
+{{ $alt := .Get "alt" | default "" }}
+{{ $widthParam := .Get "width" }}
+{{ $caption := .Get "caption" }}
+{{ $scratch := newScratch }}
+{{ $scratch.Set "width" 960 }}
+{{ with $widthParam }}
+  {{ $raw := printf "%v" . }}
+  {{ $matches := findRE "[0-9]+" $raw }}
+  {{ if gt (len $matches) 0 }}
+    {{ $parsed := int (index $matches 0) }}
+    {{ if gt $parsed 0 }}
+      {{ $scratch.Set "width" $parsed }}
+    {{ end }}
+  {{ end }}
+{{ end }}
+{{ $resource := .Page.Resources.Get $src }}
+{{ if not $resource }}
+  {{ $resource = resources.Get (printf "images/%s" $src) }}
+{{ end }}
+{{ if $resource }}
+  {{ $mediaType := $resource.MediaType }}
+  {{ $mainType := lower $mediaType.Type }}
+  {{ $subType := lower $mediaType.SubType }}
+  {{ $isImage := eq $mainType "image" }}
+  {{ $isSVG := and $isImage (or (eq $subType "svg") (eq $subType "svg+xml")) }}
+  {{ if $isSVG }}
+    <figure class="my-4 text-center">
+      <img src="{{ $resource.RelPermalink }}" alt="{{ $alt }}" loading="lazy" decoding="async" />
+      {{ with $caption }}<figcaption class="figure-caption">{{ . }}</figcaption>{{ end }}
+    </figure>
+  {{ else if $isImage }}
+    {{ $targetWidth := $scratch.Get "width" }}
+    {{ $dimension := printf "%dx" $targetWidth }}
+    {{ $resized := $resource.Fit $dimension }}
+    {{ $webp := $resized | resources.Convert "image/webp" }}
+    <figure class="my-4 text-center">
+      <picture>
+        <source srcset="{{ $webp.RelPermalink }}" type="image/webp">
+        <img src="{{ $resized.RelPermalink }}" width="{{ $resized.Width }}" height="{{ $resized.Height }}" alt="{{ $alt }}" loading="lazy" decoding="async" />
+      </picture>
+      {{ with $caption }}<figcaption class="figure-caption">{{ . }}</figcaption>{{ end }}
+    </figure>
+  {{ else }}
+    <figure class="my-4 text-center">
+      <img src="{{ $resource.RelPermalink }}" alt="{{ $alt }}" loading="lazy" decoding="async" />
+      {{ with $caption }}<figcaption class="figure-caption">{{ . }}</figcaption>{{ end }}
+    </figure>
+  {{ end }}
+{{ else }}
+  <p class="text-danger">Image {{ $src }} not found.</p>
+{{ end }}

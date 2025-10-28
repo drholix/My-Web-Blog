@@ -1,0 +1,32 @@
+{{ $page := . }}
+{{ $coverPath := $page.Params.cover }}
+{{ $cover := cond $coverPath ($page.Resources.GetMatch $coverPath) nil }}
+{{ if and (not $cover) $coverPath }}
+  {{ with resources.Get $coverPath }}{{ $cover = . }}{{ end }}
+{{ end }}
+{{ $thumbURL := "/images/dashboard-card.svg" }}
+{{ if $cover }}
+  {{ if eq (lower $cover.MediaType.Type) "image" }}
+    {{ $sub := lower $cover.MediaType.SubType }}
+    {{ if or (eq $sub "svg") (eq $sub "svg+xml") }}
+      {{ $thumbURL = $cover.RelPermalink }}
+    {{ else }}
+      {{ with $cover.Fill "320x200 center" }}{{ $thumbURL = .RelPermalink }}{{ end }}
+    {{ end }}
+  {{ end }}
+{{ end }}
+<article class="portfolio-card">
+  <a class="portfolio-card__media" href="{{ $page.RelPermalink }}">
+    <img src="{{ $thumbURL }}" alt="{{ $page.Title }} cover" loading="lazy" decoding="async">
+  </a>
+  <div class="portfolio-card__body">
+    <div class="portfolio-card__eyebrow">{{ $page.Date.Format "2006" }} · Portfolio</div>
+    <h3><a href="{{ $page.RelPermalink }}">{{ $page.Title }}</a></h3>
+    {{ with $page.Params.summary }}<p>{{ . }}</p>{{ end }}
+    {{ with $page.Params.tags }}
+      <div class="portfolio-card__tags">
+        {{ range first 4 . }}<span>#{{ . }}</span>{{ end }}
+      </div>
+    {{ end }}
+  </div>
+</article>
