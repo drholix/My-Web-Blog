@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 240" fill="none">
+  <rect width="480" height="240" rx="32" fill="#1F2041"/>
+  <rect x="80" y="64" width="120" height="120" rx="16" fill="#4B3F72"/>
+  <rect x="210" y="86" width="180" height="28" rx="6" fill="#FFC857"/>
+  <rect x="210" y="130" width="140" height="20" rx="6" fill="#E9724C"/>
+  <text x="96" y="138" fill="#F7F4EA" font-size="26" font-family="'Fira Code', monospace">IR</text>
+  <text x="210" y="192" fill="#C2D3CD" font-size="18" font-family="'Fira Code', monospace">Scalable Playbooks</text>
+</svg>

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 240" fill="none">
+  <rect width="480" height="240" rx="32" fill="#082032"/>
+  <rect x="80" y="64" width="140" height="112" rx="16" fill="#2C394B"/>
+  <path d="M240 100h140" stroke="#FF4C29" stroke-width="6" stroke-linecap="round"/>
+  <path d="M240 140h100" stroke="#FF8243" stroke-width="6" stroke-linecap="round"/>
+  <text x="110" y="128" fill="#F5F5F5" font-size="22" font-family="'Fira Code', monospace">TL</text>
+  <text x="240" y="182" fill="#F0A500" font-size="20" font-family="'Fira Code', monospace">ThreatLens</text>
+</svg>
