@@ -9,8 +9,11 @@
 {{ with index $params.languages .Lang }}
   {{ $langParams = .params }}
 {{ end }}
-{{ $pageDescription := .Params.description | default .Summary | default (index $langParams "description") | default $params.description }}
-{{ $pageDescription = truncate ($pageDescription | plainify) 160 "" }}
+{{ $pageDescription := .Params.description | default .Summary | default (index $langParams "description") | default $params.description | default "" }}
+{{ $pageDescription = ($pageDescription | plainify) }}
+{{ if gt (len $pageDescription) 160 }}
+  {{ $pageDescription = truncate 160 $pageDescription }}
+{{ end }}
 {{ $canonical := .Permalink }}
 {{ $imagePath := .Params.cover | default $params.opengraph.image }}
 {{ $imageResource := cond (and (not (eq $imagePath "")) (or .IsPage .IsSection)) (.Resources.GetMatch $imagePath) nil }}
