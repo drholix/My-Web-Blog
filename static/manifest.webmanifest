@@ -1,0 +1,24 @@
+{
+  "name": "Alief Kurniawan — Blue Team Notes",
+  "short_name": "aliefk.dev",
+  "start_url": "/?utm_source=pwa",
+  "display": "standalone",
+  "background_color": "#0d1117",
+  "theme_color": "#0d6efd",
+  "lang": "id",
+  "description": "Catatan, playbook, dan portofolio blue team dari Alief Kurniawan.",
+  "icons": [
+    {
+      "src": "/images/favicon.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/images/favicon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

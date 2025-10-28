@@ -1,0 +1,119 @@
+{{ $page := . }}
+{{ $author := site.Params.author }}
+{{ if not $author }}
+  {{ $author = dict }}
+{{ end }}
+{{ $rss := site.Home.OutputFormats.Get "RSS" }}
+{{ if $rss }}
+<link rel="alternate" type="application/rss+xml" title="{{ site.Title }}" href="{{ $rss.RelPermalink | absURL }}">
+{{ end }}
+{{ if site.Params.pwa.enable }}
+<link rel="manifest" href="{{ "manifest.webmanifest" | relURL }}">
+<meta name="theme-color" content="{{ site.Params.pwa.themeColor | default "#0d6efd" }}">
+{{ $appleIcon := site.Params.pwa.appleTouchIcon | default "images/favicon.svg" }}
+<link rel="apple-touch-icon" href="{{ $appleIcon | absURL }}">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+{{ end }}
+
+{{/* Schema.org Person metadata */}}
+{{ $person := dict "@context" "https://schema.org" "@type" "Person" "name" (default site.Title $author.name) }}
+{{ with $author.bio }}
+  {{ $person = merge $person (dict "description" .) }}
+{{ end }}
+{{ with $author.jobTitle }}
+  {{ $person = merge $person (dict "jobTitle" .) }}
+{{ end }}
+{{ with $author.url }}
+  {{ $person = merge $person (dict "url" .) }}
+{{ end }}
+{{ with $author.email }}
+  {{ $person = merge $person (dict "email" (printf "mailto:%s" .)) }}
+{{ end }}
+{{ with $author.location }}
+  {{ $person = merge $person (dict "homeLocation" (dict "@type" "Place" "name" .)) }}
+{{ end }}
+{{ with $author.sameAs }}
+  {{ $person = merge $person (dict "sameAs" .) }}
+{{ end }}
+<script type="application/ld+json">{{ $person | jsonify (dict "indent" "  ") | safeJS }}</script>
+
+{{/* Schema.org BlogPosting metadata */}}
+{{ if and $page.IsPage (eq $page.Section "posts") }}
+  {{ $published := $page.PublishDate | default $page.Date }}
+  {{ $modified := $page.Lastmod | default $published }}
+  {{ $imageResource := nil }}
+  {{ with $page.Params.cover }}
+    {{ with $page.Resources.GetMatch (printf "%s" .) }}
+      {{ $candidate := . }}
+      {{ if eq (lower $candidate.MediaType.Type) "image" }}
+        {{ if in (slice "svg" "svg+xml") (lower $candidate.MediaType.SubType) }}
+          {{ $candidate = $candidate | resources.Convert "image/png" }}
+        {{ end }}
+        {{ with $candidate.Fit "1200x630" }}
+          {{ $imageResource = . }}
+        {{ end }}
+      {{ end }}
+    {{ end }}
+  {{ end }}
+  {{ if and (not $imageResource) site.Params.opengraph.image }}
+    {{ with resources.Get site.Params.opengraph.image }}
+      {{ $candidate := . }}
+      {{ if eq (lower $candidate.MediaType.Type) "image" }}
+        {{ if in (slice "svg" "svg+xml") (lower $candidate.MediaType.SubType) }}
+          {{ $candidate = $candidate | resources.Convert "image/png" }}
+        {{ end }}
+        {{ with $candidate.Fit "1200x630" }}
+          {{ $imageResource = . }}
+        {{ end }}
+      {{ end }}
+    {{ end }}
+  {{ end }}
+  {{ $blogPosting := dict
+      "@context" "https://schema.org"
+      "@type" "BlogPosting"
+      "headline" ($page.Title | default site.Title)
+      "description" (or $page.Description site.Params.description site.Title)
+      "inLanguage" $page.Lang
+      "datePublished" ($published.Format "2006-01-02T15:04:05Z07:00")
+      "dateModified" ($modified.Format "2006-01-02T15:04:05Z07:00")
+      "mainEntityOfPage" (dict "@type" "WebPage" "@id" $page.Permalink)
+      "url" $page.Permalink
+      "wordCount" $page.WordCount
+      "author" (dict "@type" "Person" "name" (default site.Title $author.name))
+      "publisher" (dict "@type" "Organization" "name" site.Title "url" (site.BaseURL | default $page.Permalink))
+    }}
+  {{ with $imageResource }}
+    {{ $blogPosting = merge $blogPosting (dict "image" (slice (.Permalink | absURL))) }}
+  {{ end }}
+  {{ with $page.Params.categories }}
+    {{ if gt (len .) 0 }}
+      {{ $blogPosting = merge $blogPosting (dict "articleSection" (index . 0)) }}
+    {{ end }}
+  {{ end }}
+  {{ with $page.Params.tags }}
+    {{ if gt (len .) 0 }}
+      {{ $blogPosting = merge $blogPosting (dict "keywords" (delimit . ", ")) }}
+    {{ end }}
+  {{ end }}
+  <script type="application/ld+json">{{ $blogPosting | jsonify (dict "indent" "  ") | safeJS }}</script>
+{{ end }}
+
+{{/* Schema.org BreadcrumbList metadata */}}
+{{ $breadcrumbs := slice (dict "@type" "ListItem" "position" 1 "name" site.Title "item" (site.BaseURL | default site.Home.Permalink)) }}
+{{ $position := 2 }}
+{{ if $page.IsPage }}
+  {{ with $page.CurrentSection }}
+    {{ if and (ne .Kind "home") (ne .RelPermalink site.Home.RelPermalink) }}
+      {{ $breadcrumbs = append $breadcrumbs (dict "@type" "ListItem" "position" $position "name" .Title "item" (.Permalink | absURL)) }}
+      {{ $position = add $position 1 }}
+    {{ end }}
+  {{ end }}
+  {{ $breadcrumbs = append $breadcrumbs (dict "@type" "ListItem" "position" $position "name" ($page.Title | default site.Title) "item" ($page.Permalink | absURL)) }}
+{{ else if or (eq $page.Kind "section") (eq $page.Kind "term") (eq $page.Kind "taxonomy") }}
+  {{ $breadcrumbs = append $breadcrumbs (dict "@type" "ListItem" "position" $position "name" ($page.Title | default site.Title) "item" ($page.Permalink | absURL)) }}
+{{ end }}
+{{ if gt (len $breadcrumbs) 1 }}
+  {{ $breadcrumbJSON := dict "@context" "https://schema.org" "@type" "BreadcrumbList" "itemListElement" $breadcrumbs }}
+  <script type="application/ld+json">{{ $breadcrumbJSON | jsonify (dict "indent" "  ") | safeJS }}</script>
+{{ end }}
