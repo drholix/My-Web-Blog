@@ -1,0 +1,43 @@
+<header class="site-header">
+  <div class="site-header__inner">
+    <div>
+      <a class="brand" href="{{ .Site.Home.RelPermalink }}">{{ .Site.Title }}</a>
+      <p class="tagline">{{ .Site.Params.author.headline }}</p>
+    </div>
+    <nav class="site-nav" aria-label="Main navigation">
+      {{ range .Menus.main }}
+        <a href="{{ .URL }}"{{ if $.IsMenuCurrent "main" . }} aria-current="page"{{ end }}>{{ .Name }}</a>
+      {{ end }}
+    </nav>
+    <div class="controls">
+      <label>
+        <span class="sr-only">Color mode</span>
+        <select id="color-mode-toggle">
+          <option value="auto">Auto</option>
+          <option value="light">Light</option>
+          <option value="dark">Dark</option>
+        </select>
+      </label>
+      {{ if site.Params.fontSize.enable }}
+        <label>
+          <span class="sr-only">Font scale</span>
+          <select id="font-scale-toggle">
+            {{ range site.Params.fontSize.choices }}
+              <option value="{{ . }}"{{ if eq . (site.Params.fontSize.default | default "md") }} selected{{ end }}>{{ upper . }}</option>
+            {{ end }}
+          </select>
+        </label>
+      {{ end }}
+      {{ if gt (len .AllTranslations) 1 }}
+        <label>
+          <span class="sr-only">Language</span>
+          <select id="language-switcher">
+            {{ range .AllTranslations }}
+              <option value="{{ .RelPermalink }}"{{ if eq .Lang $.Lang }} selected{{ end }}>{{ .Language.LanguageName }}</option>
+            {{ end }}
+          </select>
+        </label>
+      {{ end }}
+    </div>
+  </div>
+</header>

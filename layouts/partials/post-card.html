@@ -1,0 +1,13 @@
+{{ $page := . }}
+<article class="card">
+  <div class="card__meta">
+    {{ with $page.Date }}{{ .Format "02 Jan 2006" }} · {{ end }}{{ with index $page.Params.categories 0 }}{{ . | humanize }}{{ end }}
+  </div>
+  <h3 class="card__title"><a href="{{ $page.RelPermalink }}">{{ $page.Title }}</a></h3>
+  {{ with $page.Summary }}<p class="card__summary">{{ . | plainify }}</p>{{ end }}
+  {{ with $page.Params.tags }}
+    <div class="card__tags">
+      {{ range first 3 . }}<span class="card__tag">#{{ . }}</span>{{ end }}
+    </div>
+  {{ end }}
+</article>

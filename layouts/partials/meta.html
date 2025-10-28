@@ -1,0 +1,70 @@
+{{ $site := .Site }}
+{{ $params := $site.Params }}
+{{ $separator := $params.seo.titleSeparator | default "•" }}
+{{ $pageTitle := cond .IsHome ($site.Title) (.Title | default $site.Title) }}
+{{ if and (not .IsHome) $site.Title }}
+  {{ $pageTitle = printf "%s %s %s" $pageTitle $separator $site.Title }}
+{{ end }}
+{{ $langParams := dict }}
+{{ with index $params.languages .Lang }}
+  {{ $langParams = .params }}
+{{ end }}
+{{ $pageDescription := .Params.description | default .Summary | default (index $langParams "description") | default $params.description }}
+{{ $pageDescription = truncate ($pageDescription | plainify) 160 "" }}
+{{ $canonical := .Permalink }}
+{{ $imagePath := .Params.cover | default $params.opengraph.image }}
+{{ $imageResource := cond (and (not (eq $imagePath "")) (or .IsPage .IsSection)) (.Resources.GetMatch $imagePath) nil }}
+{{ if and (not $imageResource) $imagePath }}
+  {{ $imageResource = resources.Get $imagePath }}
+{{ end }}
+{{ $ogImage := "" }}
+{{ $ogWidth := 0 }}
+{{ $ogHeight := 0 }}
+{{ if $imageResource }}
+  {{ $mediaType := $imageResource.MediaType }}
+  {{ if eq (lower $mediaType.Type) "image" }}
+    {{ $sub := lower $mediaType.SubType }}
+    {{ if or (eq $sub "svg") (eq $sub "svg+xml") }}
+      {{ $png := $imageResource | resources.Convert "image/png" }}
+      {{ with $png }}
+        {{ $imageResource = . }}
+      {{ end }}
+    {{ end }}
+    {{ $resized := $imageResource.Fit "1200x630" }}
+    {{ $ogImage = $resized.Permalink }}
+    {{ $ogWidth = $resized.Width }}
+    {{ $ogHeight = $resized.Height }}
+  {{ end }}
+{{ else if $imagePath }}
+  {{ $ogImage = absURL (relURL $imagePath) }}
+{{ end }}
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ $pageTitle }}</title>
+{{ with $pageDescription }}<meta name="description" content="{{ . }}">{{ end }}
+<link rel="canonical" href="{{ $canonical }}">
+{{ range .AllTranslations }}
+  <link rel="alternate" href="{{ .Permalink }}" hreflang="{{ .Lang }}">
+{{ end }}
+{{ range $site.Languages }}
+  {{ if eq .Lang $site.Language.Lang }}
+    <link rel="alternate" hreflang="x-default" href="{{ $.Permalink }}">
+  {{ end }}
+{{ end }}
+
+{{ if $ogImage }}
+  <meta property="og:image" content="{{ $ogImage }}">
+  {{ if gt $ogWidth 0 }}<meta property="og:image:width" content="{{ $ogWidth }}">{{ end }}
+  {{ if gt $ogHeight 0 }}<meta property="og:image:height" content="{{ $ogHeight }}">{{ end }}
+{{ end }}
+<meta property="og:type" content="{{ if .IsHome }}website{{ else }}article{{ end }}">
+<meta property="og:title" content="{{ $pageTitle }}">
+{{ with $pageDescription }}<meta property="og:description" content="{{ . }}">{{ end }}
+<meta property="og:url" content="{{ $canonical }}">
+<meta property="og:locale" content="{{ .Lang }}">
+
+{{ with $params.opengraph.twitterCard }}<meta name="twitter:card" content="{{ . }}">{{ end }}
+{{ with $params.opengraph.twitterSite }}<meta name="twitter:site" content="{{ . }}">{{ end }}
+
+{{ partial "structured-data.html" (dict "Page" . "Description" $pageDescription "Image" $ogImage) }}
