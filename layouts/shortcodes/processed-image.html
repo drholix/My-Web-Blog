@@ -1,6 +1,6 @@
 {{ $src := .Get "src" }}
 {{ $alt := .Get "alt" | default "" }}
-{{ $width := .Get "width" | default 960 }}
+{{ $width := (.Get "width" | default "960") | int }}
 {{ with .Page.Resources.Get $src }}
   {{ $resized := .Fit (printf "%dx" $width) }}
   {{ $webp := $resized | resources.Convert "image/webp" }}

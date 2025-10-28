@@ -8,8 +8,8 @@ Repositori ini menyiapkan situs statis **Hugo + Hugo Bootstrap (HBS)** dengan ko
 
 | Komponen | Versi minimum | Catatan |
 | --- | --- | --- |
-| Hugo Extended | `0.125.0` | Pastikan `hugo version` menampilkan "Extended". |
-| Node.js / npm | Node `18.x` / npm `9.x` | Opsional; dipakai bila ada automasi tambahan. |
+| Hugo Extended | `0.152.2` | Pastikan `hugo version` menampilkan "Extended". |
+| Node.js / npm | Node `18.x` / npm `9.x` | Wajib untuk kompilasi aset HBS (Bootstrap SCSS & ikon). |
 | Git | `>=2.40` | Untuk clone & deploy. |
 | Akses Netlify & Cloudflare | Free Plan | Netlify untuk hosting, Cloudflare sebagai proxy & DNS. |
 
@@ -27,7 +27,7 @@ cd aliefk.dev
 # 2. Sinkronisasi modul tema HBS
 hugo mod get
 
-# 3. (Opsional) pasang dependensi tambahan
+# 3. Pasang dependensi frontend (Bootstrap, ikon)
 npm install
 
 # 4. Verifikasi versi Hugo
@@ -51,12 +51,13 @@ File konfigurasi berada di `config/_default/` dan `hugo.toml`.
 baseURL = "https://aliefk.dev/"
 title = "Alief Kurniawan — Blue Team Notes"
 languageCode = "id"
-paginate = 10
+[pagination]
+  pagerSize = 10
 defaultContentLanguage = "id"
 defaultContentLanguageInSubdir = false
 enableRobotsTXT = true
 
-theme = ["github.com/razonyang/hugo-theme-bootstrap/v1"]
+theme = ["github.com/razonyang/hugo-theme-bootstrap"]
 
 [sitemap]
   changefreq = "weekly"
@@ -239,10 +240,10 @@ du -sh public/
 ### 5.2 Konfigurasi Netlify
 
 - **Repository**: hubungkan GitHub → Netlify `Add new site` → `Import from Git`.
-- **Build command**: `npm install && hugo --minify` (opsional npm jika diperlukan).
+- **Build command**: `npm install && hugo --minify` (wajib untuk mengunduh dependensi Bootstrap & ikon).
 - **Publish directory**: `public`.
 - **Environment variables**:
-  - `HUGO_VERSION=0.125.0`
+  - `HUGO_VERSION=0.152.2`
   - `HUGO_ENABLEGITINFO=true`
   - `TURNSTILE_SITE_KEY`, `TURNSTILE_SECRET_KEY` (opsional).
 
@@ -253,7 +254,7 @@ du -sh public/
   publish = "public"
 
 [build.environment]
-  HUGO_VERSION = "0.125.0"
+  HUGO_VERSION = "0.152.2"
   HUGO_ENABLEGITINFO = "true"
 
 [context.production]
