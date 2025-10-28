@@ -20,6 +20,8 @@ jobs:
           curl -L https://github.com/gohugoio/hugo/releases/download/v0.125.0/hugo_extended_0.125.0_Linux-64bit.tar.gz -o hugo.tar.gz
           tar -xzf hugo.tar.gz
           sudo mv hugo /usr/local/bin/hugo
+      - name: Download Hugo modules
+        run: hugo mod tidy
       - name: Build site
         run: hugo --gc --minify
       - name: Run Lighthouse CI
