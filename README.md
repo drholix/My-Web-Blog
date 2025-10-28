@@ -1,6 +1,6 @@
-# aliefk.dev — Hugo Bootstrap Blueprint (ID/EN)
+# aliefk.dev — Hugo Bilingual Blueprint (ID/EN)
 
-Repositori ini menyiapkan situs statis **Hugo + Hugo Bootstrap (HBS)** dengan konten dwibahasa (Indonesia & Inggris), siap deploy di **Netlify** dan diamankan oleh **Cloudflare**. Seluruh panduan di bawah berfungsi sebagai _runbook_ QA + DevOps: mulai dari setup lokal, konfigurasi inti, alur konten, hingga checklist produksi.
+Repositori ini menyiapkan situs statis **Hugo + tema Hugo Bootstrap (HBS)** dengan konten dwibahasa (Indonesia & Inggris), siap deploy di **Netlify** dan diamankan oleh **Cloudflare**. Seluruh panduan di bawah berfungsi sebagai _runbook_ QA + DevOps: mulai dari setup lokal, konfigurasi inti, alur konten, hingga checklist produksi.
 
 ---
 
@@ -8,8 +8,8 @@ Repositori ini menyiapkan situs statis **Hugo + Hugo Bootstrap (HBS)** dengan ko
 
 | Komponen | Versi minimum | Catatan |
 | --- | --- | --- |
-| Hugo Extended | `0.125.0` | Pastikan `hugo version` menampilkan "Extended". |
-| Node.js / npm | Node `18.x` / npm `9.x` | Opsional; dipakai bila ada automasi tambahan. |
+| Hugo Extended | `0.152.2` | Pastikan `hugo version` menampilkan "Extended". |
+| Node.js / npm | Node `18.x` / npm `9.x` | Diperlukan untuk menjalankan Lighthouse CI dan tool pendukung opsional. |
 | Git | `>=2.40` | Untuk clone & deploy. |
 | Akses Netlify & Cloudflare | Free Plan | Netlify untuk hosting, Cloudflare sebagai proxy & DNS. |
 
@@ -24,16 +24,13 @@ Tambahan rekomendasi: editor dengan dukungan Markdown (VS Code), serta akun GitH
 git clone https://github.com/<username>/aliefk.dev.git
 cd aliefk.dev
 
-# 2. Sinkronisasi modul tema HBS
-hugo mod get
+# 2. (Opsional) pasang Lighthouse CI untuk uji performa lokal
+npm install -g @lhci/cli
 
-# 3. (Opsional) pasang dependensi tambahan
-npm install
-
-# 4. Verifikasi versi Hugo
+# 3. Verifikasi versi Hugo
 hugo version
 
-# 5. Jalankan server pengembangan dengan konten draft
+# 4. Jalankan server pengembangan dengan konten draft
 hugo server -D
 ```
 
@@ -51,12 +48,12 @@ File konfigurasi berada di `config/_default/` dan `hugo.toml`.
 baseURL = "https://aliefk.dev/"
 title = "Alief Kurniawan — Blue Team Notes"
 languageCode = "id"
-paginate = 10
 defaultContentLanguage = "id"
 defaultContentLanguageInSubdir = false
 enableRobotsTXT = true
 
-theme = ["github.com/razonyang/hugo-theme-bootstrap/v1"]
+[pagination]
+  pagerSize = 10
 
 [sitemap]
   changefreq = "weekly"
@@ -152,7 +149,7 @@ theme = ["github.com/razonyang/hugo-theme-bootstrap/v1"]
 ### 3.3 `config/_default/params.toml`
 
 - Metadata penulis (`[author]`), deskripsi situs, kata kunci.
-- Pengaturan UI HBS: toggle mode (`[color]`), switcher ukuran font (`[fontSize]`).
+- Pengaturan UI: toggle mode (`[color]`), switcher ukuran font (`[fontSize]`).
 - Integrasi Cloudflare Analytics & Turnstile (`[analytics]`, `[security.turnstile]`).
 - Pengendali PWA (`[pwa]`) dan OG default (`[opengraph]`).
 
@@ -239,10 +236,10 @@ du -sh public/
 ### 5.2 Konfigurasi Netlify
 
 - **Repository**: hubungkan GitHub → Netlify `Add new site` → `Import from Git`.
-- **Build command**: `npm install && hugo --minify` (opsional npm jika diperlukan).
+- **Build command**: `hugo --gc --minify` (sama seperti konfigurasi Netlify).
 - **Publish directory**: `public`.
 - **Environment variables**:
-  - `HUGO_VERSION=0.125.0`
+  - `HUGO_VERSION=0.152.2`
   - `HUGO_ENABLEGITINFO=true`
   - `TURNSTILE_SITE_KEY`, `TURNSTILE_SECRET_KEY` (opsional).
 
@@ -253,11 +250,14 @@ du -sh public/
   publish = "public"
 
 [build.environment]
-  HUGO_VERSION = "0.125.0"
+  HUGO_VERSION = "0.152.2"
   HUGO_ENABLEGITINFO = "true"
 
 [context.production]
-  command = "npm install && hugo --minify"
+  command = "hugo --gc --minify"
+
+[context.deploy-preview]
+  command = "hugo --gc --minify -D"
 
 [[redirects]]
   from = "https://www.aliefk.dev/*"
@@ -273,7 +273,25 @@ du -sh public/
     X-Frame-Options = "DENY"
     Permissions-Policy = "accelerometer=(), camera=(), geolocation=(), gyroscope=(), microphone=()"
     Strict-Transport-Security = "max-age=63072000; includeSubDomains; preload"
-    Content-Security-Policy = "default-src 'self'; img-src 'self' data: https:; style-src 'self' 'unsafe-inline'; script-src 'self' https://static.cloudflareinsights.com https://challenges.cloudflare.com https://giscus.app; connect-src 'self' https://cloudflareinsights.com; font-src 'self' data:; frame-src 'self' https://challenges.cloudflare.com https://giscus.app; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self';"
+    Content-Security-Policy = "default-src 'self'; img-src 'self' data: https:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com https://challenges.cloudflare.com https://giscus.app; connect-src 'self' https://cloudflareinsights.com; font-src 'self' data:; frame-src 'self' https://challenges.cloudflare.com https://giscus.app; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self';"
+    Cache-Control = "public, max-age=600, must-revalidate"
+
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "no-cache, no-store, must-revalidate"
+    Service-Worker-Allowed = "/"
+
+[[headers]]
+  for = "/manifest.webmanifest"
+  [headers.values]
+    Cache-Control = "public, max-age=3600"
+    Content-Type = "application/manifest+json"
+
+[[headers]]
+  for = "/offline.html"
+  [headers.values]
+    Cache-Control = "public, max-age=300, must-revalidate"
 ```
 
 Tambahkan blok header tambahan untuk `sw.js`, `manifest.webmanifest`, dan `offline.html` bila menggunakan mode offline.
@@ -333,7 +351,7 @@ Lakukan regresi berikut setelah setiap perubahan besar.
 - [ ] JSON-LD (`Person`, `BlogPosting`, `BreadcrumbList`) lolos validasi.
 - [ ] Security headers (CSP, HSTS, Referrer-Policy, Permissions-Policy, X-Content-Type-Options, X-Frame-Options) aktif.
 - [ ] Lighthouse (desktop & mobile) menunjukkan skor ≥ 90 untuk Performance, Accessibility, Best Practices, SEO.
-- [ ] Netlify build `npm install && hugo --minify` selesai tanpa error.
+- [ ] Netlify build `hugo --gc --minify` selesai tanpa error.
 - [ ] Cloudflare proxy + Bot Fight Mode + WAF aktif tanpa konflik CSP.
 
 ---
@@ -351,7 +369,7 @@ Lakukan regresi berikut setelah setiap perubahan besar.
 
 | Gejala | Penyebab Umum | Solusi |
 | --- | --- | --- |
-| Build gagal karena tema | Modul belum tersinkron | Jalankan `hugo mod get` atau `hugo mod tidy`. |
+| Halaman kosong saat build | Tema HBS belum terunduh | Jalankan `hugo mod tidy` atau `hugo --gc --minify` dengan koneksi internet untuk mengunduh modul `github.com/razonyang/hugo-theme-bootstrap/v1`. |
 | Turnstile tidak muncul | Site key kosong | Isi `params.security.turnstile.siteKey` atau env var. |
 | CSP block Cloudflare Analytics | `script-src` kurang domain | Tambahkan `https://static.cloudflareinsights.com` ke CSP. |
 | Lighthouse skor rendah | Gambar terlalu besar / font eksternal | Optimasi WebP & self-host fonts. |
@@ -442,7 +460,7 @@ jobs:
 ## 13. Lisensi & Atribusi
 
 - Kode dalam repositori ini berada di bawah lisensi MIT (lihat `LICENSE`).
-- Tema: [Hugo Theme Bootstrap](https://hbs.razonyang.com/).
+- Tema utama: [Hugo Bootstrap (HBS)](https://github.com/razonyang/hugo-theme-bootstrap) melalui Hugo Modules.
 - Ikon/gambar mengikuti lisensi masing-masing sumber.
 
 Selamat membangun pusat knowledge Blue Team Anda! 🚀
