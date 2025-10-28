@@ -1,0 +1,17 @@
+{{ if and .Site.Params.pwa.enable (not .Site.IsServer) }}
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('{{ "sw.js" | relURL }}').catch(function (error) {
+      console.warn('Service worker registration failed:', error);
+    });
+  });
+}
+</script>
+{{ end }}
+{{ with .Site.Params.security.turnstile.siteKey }}
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+{{ end }}
+{{ with .Site.Params.analytics.cloudflareToken }}
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"{{ . }}"}'></script>
+{{ end }}

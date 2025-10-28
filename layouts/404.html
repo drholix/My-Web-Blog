@@ -1,0 +1,7 @@
+{{ define "main" }}
+  <section class="container py-5 text-center">
+    <h1 class="display-4 mb-3">{{ i18n "not_found_title" | default "Page not found" }}</h1>
+    <p class="lead mb-4">{{ i18n "not_found_body" | default "The page you are looking for cannot be found." }}</p>
+    <a class="btn btn-primary" href="{{ .Site.Home.RelPermalink }}">{{ i18n "back_home" | default "Go back home" }}</a>
+  </section>
+{{ end }}
