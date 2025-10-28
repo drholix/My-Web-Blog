@@ -1,0 +1,17 @@
+{{ define "main" }}
+<section class="hero">
+  <h1>{{ .Title }}</h1>
+</section>
+{{ if .Data.Terms }}
+<ul class="grid two-column" style="list-style:none; padding:0;">
+  {{ range .Data.Terms.Alphabetical }}
+    <li class="post-card">
+      <h2><a href="{{ .Page.RelPermalink }}">{{ .LinkTitle }}</a></h2>
+      <p>{{ .Count }} {{ if eq $.Data.Singular "tag" }}{{ i18n "posts" | default "posts" }}{{ else }}{{ i18n "entries" | default "entries" }}{{ end }}</p>
+    </li>
+  {{ end }}
+</ul>
+{{ else }}
+<p>{{ i18n "no_entries" | default "No content available yet." }}</p>
+{{ end }}
+{{ end }}

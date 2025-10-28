@@ -1,0 +1,141 @@
+{{ $colorMode := site.Params.color.mode | default "auto" }}
+{{ $fontDefault := site.Params.fontSize.default | default "md" }}
+{{ $fontChoices := site.Params.fontSize.choices | default (slice "sm" "md" "lg") }}
+{{ $css := resources.Get "css/site.css" | resources.Minify | resources.Fingerprint }}
+<!DOCTYPE html>
+<html lang="{{ .Site.Language.Lang }}" data-color-mode="auto">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ block "title" . }}{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }} · {{ site.Title }}{{ end }}{{ end }}</title>
+  {{ with $css }}<link rel="stylesheet" href="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}" crossorigin="anonymous">{{ end }}
+  {{ partial "head/favicons.html" . }}
+  {{ partial "seo/opengraph.html" . }}
+  {{ partial "extend/head-end.html" . }}
+</head>
+<body class="font-size-{{ $fontDefault }}">
+  <header class="site-header">
+    <div class="container">
+      <a class="brand" href="{{ .Site.Home.RelPermalink }}">{{ site.Title }}</a>
+      <nav class="site-nav" aria-label="Primary">
+        {{ range .Site.Menus.main }}
+          {{ $isCurrent := or ($.IsMenuCurrent "main" .) ($.HasMenuCurrent "main" .) (eq $.RelPermalink (.URL | relLangURL)) }}
+          <a href="{{ .URL | relLangURL }}"{{ if $isCurrent }} class="active"{{ end }}>{{ .Name }}</a>
+        {{ end }}
+      </nav>
+      <div class="controls">
+        {{ if site.IsMultiLingual }}
+          {{ $page := . }}
+          {{ $map := dict $page.Lang $page }}
+          {{ range .Translations }}
+            {{ $map = merge $map (dict .Lang .) }}
+          {{ end }}
+          {{ $homeMap := dict site.Home.Lang site.Home }}
+          {{ range site.Home.AllTranslations }}
+            {{ $homeMap = merge $homeMap (dict .Lang .) }}
+          {{ end }}
+          <div class="control-group language-switch">
+            <span>{{ i18n "language" | default "Language" }}:</span>
+            <select id="language-toggle" class="toggle-control">
+              {{ range site.Languages }}
+                {{ $target := or (index $map .Lang) (index $homeMap .Lang) }}
+                {{ if not $target }}{{ $target = site.Home }}{{ end }}
+                <option value="{{ $target.RelPermalink }}"{{ if eq .Lang $page.Lang }} selected{{ end }}>{{ .LanguageName }}</option>
+              {{ end }}
+            </select>
+          </div>
+        {{ end }}
+        <div class="control-group">
+          <label for="color-mode-toggle">Mode</label>
+          <select id="color-mode-toggle" class="toggle-control" data-default="{{ $colorMode }}">
+            <option value="auto">Auto</option>
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+          </select>
+        </div>
+        {{ if site.Params.fontSize.enable }}
+        <div class="control-group">
+          <label for="font-size-toggle">Font</label>
+          <select id="font-size-toggle" class="toggle-control" data-default="{{ $fontDefault }}">
+            {{ range $fontChoices }}
+              <option value="{{ . }}">{{ . | upper }}</option>
+            {{ end }}
+          </select>
+        </div>
+        {{ end }}
+      </div>
+    </div>
+  </header>
+  <main class="container">
+    {{ block "main" . }}{{ end }}
+  </main>
+  <footer class="site-footer">
+    <div class="container">
+      <div>&copy; {{ now.Format "2006" }} {{ site.Title }}</div>
+      <div>{{ site.Params.description }}</div>
+      <div class="meta-inline">
+        <span><a href="{{ "index.xml" | relLangURL }}">RSS</a></span>
+        <span><a href="{{ "sitemap.xml" | relURL }}">Sitemap</a></span>
+      </div>
+    </div>
+  </footer>
+  {{ partial "extend/body-end.html" . }}
+  <script>
+  (function() {
+    const root = document.documentElement;
+    const colorSelect = document.getElementById('color-mode-toggle');
+    const fontSelect = document.getElementById('font-size-toggle');
+    const langSelect = document.getElementById('language-toggle');
+    const storage = window.localStorage || null;
+
+    function applyColor(mode) {
+      if (!mode || mode === 'auto') {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        root.setAttribute('data-color-mode', prefersDark ? 'dark' : 'light');
+      } else {
+        root.setAttribute('data-color-mode', mode);
+      }
+      if (colorSelect) colorSelect.value = mode || 'auto';
+    }
+
+    function applyFont(size) {
+      const valid = ['xs','sm','md','lg','xl'];
+      const next = valid.includes(size) ? size : (fontSelect ? fontSelect.dataset.default : 'md');
+      document.body.className = document.body.className.replace(/font-size-[^\s]+/g, '').trim();
+      document.body.classList.add('font-size-' + next);
+      if (fontSelect) fontSelect.value = next;
+    }
+
+    const storedMode = storage ? storage.getItem('color-mode') : null;
+    const storedFont = storage ? storage.getItem('font-size') : null;
+    applyColor(storedMode || (colorSelect ? colorSelect.dataset.default : 'auto'));
+    applyFont(storedFont || (fontSelect ? fontSelect.dataset.default : 'md'));
+
+    if (colorSelect) {
+      colorSelect.addEventListener('change', (event) => {
+        const value = event.target.value;
+        if (storage) storage.setItem('color-mode', value);
+        applyColor(value);
+      });
+    }
+
+    if (fontSelect) {
+      fontSelect.addEventListener('change', (event) => {
+        const value = event.target.value;
+        if (storage) storage.setItem('font-size', value);
+        applyFont(value);
+      });
+    }
+
+    if (langSelect) {
+      langSelect.addEventListener('change', (event) => {
+        const url = event.target.value;
+        if (url) {
+          window.location.href = url;
+        }
+      });
+    }
+  })();
+  </script>
+</body>
+</html>
