@@ -1,5 +1,9 @@
 description = "Catatan dan portofolio SOC/Blue Team dari Alief Kurniawan."
-favicon = "images/favicon.svg"
+
+[favicon]
+  svg = "images/favicon.svg"
+  apple = "images/favicon.svg"
+  sizes = []
 
 [author]
   name = "Alief Kurniawan"
