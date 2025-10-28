@@ -1,0 +1,11 @@
+{{ $page := . }}
+<article class="card">
+  <div class="card__meta">{{ $page.Date.Format "2006" }} · Portfolio</div>
+  <h3 class="card__title"><a href="{{ $page.RelPermalink }}">{{ $page.Title }}</a></h3>
+  {{ with $page.Params.summary }}<p class="card__summary">{{ . }}</p>{{ end }}
+  {{ with $page.Params.tags }}
+    <div class="card__tags">
+      {{ range first 4 . }}<span class="card__tag">{{ . }}</span>{{ end }}
+    </div>
+  {{ end }}
+</article>

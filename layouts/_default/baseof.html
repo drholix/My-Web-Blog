@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="{{ .Lang }}" data-color-mode="auto" data-font-scale="{{ site.Params.fontSize.default | default "md" }}" data-font-choices="{{ delimit (site.Params.fontSize.choices | default (slice "xs" "sm" "md" "lg" "xl")) "," }}">
+  <head>
+    {{ partial "meta.html" . }}
+    {{ partial "styles.html" . }}
+  </head>
+  <body class="layout">
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    {{ partial "header.html" . }}
+    <main id="main-content" class="container">
+      {{ block "main" . }}{{ end }}
+    </main>
+    {{ partial "footer.html" . }}
+    {{ partial "scripts.html" . }}
+  </body>
+</html>

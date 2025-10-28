@@ -1,0 +1,35 @@
+[[main]]
+  identifier = "blog"
+  name = "Blog"
+  url = "/"
+  weight = 1
+
+[[main]]
+  identifier = "portfolio"
+  name = "Portofolio"
+  url = "/portfolio/"
+  weight = 2
+
+[[main]]
+  identifier = "tags"
+  name = "Tag"
+  url = "/tags/"
+  weight = 3
+
+[[main]]
+  identifier = "archive"
+  name = "Arsip"
+  url = "/archives/"
+  weight = 4
+
+[[main]]
+  identifier = "about"
+  name = "Tentang"
+  url = "/about/"
+  weight = 5
+
+[[main]]
+  identifier = "contact"
+  name = "Kontak"
+  url = "/contact/"
+  weight = 6
