@@ -2,7 +2,8 @@
   "ci": {
     "collect": {
       "staticDistDir": "public",
-      "numberOfRuns": 3
+      "url": ["/", "/posts/", "/portfolio/"],
+      "numberOfRuns": 2
     },
     "assert": {
       "assertions": {

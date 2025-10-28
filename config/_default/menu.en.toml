@@ -1,0 +1,35 @@
+[[main]]
+  identifier = "blog"
+  name = "Blog"
+  url = "/en/"
+  weight = 1
+
+[[main]]
+  identifier = "portfolio"
+  name = "Portfolio"
+  url = "/en/portfolio/"
+  weight = 2
+
+[[main]]
+  identifier = "tags"
+  name = "Tags"
+  url = "/en/tags/"
+  weight = 3
+
+[[main]]
+  identifier = "archive"
+  name = "Archive"
+  url = "/en/archives/"
+  weight = 4
+
+[[main]]
+  identifier = "about"
+  name = "About"
+  url = "/en/about/"
+  weight = 5
+
+[[main]]
+  identifier = "contact"
+  name = "Contact"
+  url = "/en/contact/"
+  weight = 6

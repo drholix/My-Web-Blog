@@ -1,4 +1,4 @@
-{{ if and site.Params.pwa.enable (not site.IsServer) }}
+{{ if and .Site.Params.pwa.enable (not .Site.IsServer) }}
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function () {
@@ -9,9 +9,9 @@ if ('serviceWorker' in navigator) {
 }
 </script>
 {{ end }}
-{{ with site.Params.security.turnstile.siteKey }}
+{{ with .Site.Params.security.turnstile.siteKey }}
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 {{ end }}
-{{ with site.Params.analytics.cloudflareToken }}
+{{ with .Site.Params.analytics.cloudflareToken }}
 <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"{{ . }}"}'></script>
 {{ end }}
