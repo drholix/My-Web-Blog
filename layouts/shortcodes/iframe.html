@@ -1,0 +1,9 @@
+<figure class="ratio ratio-16x9 my-4">
+  <iframe
+    src="{{ .Get "src" }}"
+    title="{{ .Get "title" }}"
+    loading="lazy"
+    allowfullscreen="{{ with .Get "allowfullscreen" }}{{ . }}{{ else }}false{{ end }}"
+    referrerpolicy="strict-origin-when-cross-origin"
+  ></iframe>
+</figure>
