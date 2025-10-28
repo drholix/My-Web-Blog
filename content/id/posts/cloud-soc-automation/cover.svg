@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 240" fill="none">
+  <rect width="480" height="240" rx="32" fill="#0D1B2A"/>
+  <circle cx="96" cy="120" r="48" fill="#1B263B"/>
+  <path d="M160 140h240" stroke="#4DA8DA" stroke-width="6" stroke-linecap="round"/>
+  <path d="M160 100h200" stroke="#415A77" stroke-width="6" stroke-linecap="round"/>
+  <text x="180" y="126" fill="#E0E1DD" font-size="28" font-family="'Fira Code', monospace">Cloud SOC</text>
+  <text x="180" y="162" fill="#778DA9" font-size="18" font-family="'Fira Code', monospace">Automation Runbook</text>
+</svg>

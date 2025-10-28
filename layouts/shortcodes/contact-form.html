@@ -1,0 +1,39 @@
+{{ $lang := .Page.Lang }}
+{{ $labels := dict
+  "name" (cond (eq $lang "id") "Nama" "Name")
+  "email" (cond (eq $lang "id") "Email" "Email")
+  "message" (cond (eq $lang "id") "Pesan" "Message")
+  "submit" (cond (eq $lang "id") "Kirim" "Send")
+  "success" (cond (eq $lang "id") "Terima kasih! Saya akan segera membalas." "Thank you! I'll get back to you shortly.")
+  "intro" (cond (eq $lang "id") "Isi formulir berikut untuk menghubungi saya." "Use the form below to get in touch.")
+}}
+<section class="contact-form my-5">
+  <p class="lead">{{ index $labels "intro" }}</p>
+  <form name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" class="needs-validation" novalidate>
+    <input type="hidden" name="form-name" value="contact">
+    <p class="visually-hidden">
+      <label>Don't fill this out if you're human: <input name="bot-field"></label>
+    </p>
+    <div class="row g-3">
+      <div class="col-12 col-md-6">
+        <label for="contact-name" class="form-label">{{ index $labels "name" }}</label>
+        <input id="contact-name" name="name" type="text" class="form-control" required autocomplete="name">
+      </div>
+      <div class="col-12 col-md-6">
+        <label for="contact-email" class="form-label">{{ index $labels "email" }}</label>
+        <input id="contact-email" name="email" type="email" class="form-control" required autocomplete="email">
+      </div>
+      <div class="col-12">
+        <label for="contact-message" class="form-label">{{ index $labels "message" }}</label>
+        <textarea id="contact-message" name="message" rows="6" class="form-control" required></textarea>
+      </div>
+    </div>
+    {{ with site.Params.security.turnstile.siteKey }}
+    <div class="mt-4">
+      <div class="cf-turnstile" data-sitekey="{{ . }}" data-theme="{{ site.Params.security.turnstile.widgetTheme | default "auto" }}" data-language="{{ $lang }}"></div>
+    </div>
+    {{ end }}
+    <button type="submit" class="btn btn-primary mt-4">{{ index $labels "submit" }}</button>
+    <p class="form-text mt-2">{{ index $labels "success" }}</p>
+  </form>
+</section>

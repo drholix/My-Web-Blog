@@ -1,0 +1,16 @@
+{{ $src := .Get "src" }}
+{{ $alt := .Get "alt" | default "" }}
+{{ $width := .Get "width" | default 960 }}
+{{ with .Page.Resources.Get $src }}
+  {{ $resized := .Fit (printf "%dx" $width) }}
+  {{ $webp := $resized | resources.Convert "image/webp" }}
+  <figure class="my-4 text-center">
+    <picture>
+      <source srcset="{{ $webp.RelPermalink }}" type="image/webp">
+      <img src="{{ $resized.RelPermalink }}" width="{{ $resized.Width }}" height="{{ $resized.Height }}" alt="{{ $alt }}" loading="lazy" decoding="async" />
+    </picture>
+    {{ with $.Get "caption" }}<figcaption class="figure-caption">{{ . }}</figcaption>{{ end }}
+  </figure>
+{{ else }}
+  <p class="text-danger">Image {{ $src }} not found.</p>
+{{ end }}
