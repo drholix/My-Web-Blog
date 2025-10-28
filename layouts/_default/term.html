@@ -1,0 +1,21 @@
+{{ define "main" }}
+<section class="hero">
+  <h1>{{ .Title }}</h1>
+</section>
+{{ if .Pages }}
+<div class="grid two-column">
+  {{ range .Pages }}
+  <article class="post-card">
+    <h2><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
+    <div class="meta-inline">
+      <span>{{ .Date.Format "02 Jan 2006" }}</span>
+      {{ with .ReadingTime }}<span>{{ . }} min read</span>{{ end }}
+    </div>
+    {{ with .Params.summary }}<p>{{ . }}</p>{{ else }}<p>{{ .Summary }}</p>{{ end }}
+  </article>
+  {{ end }}
+</div>
+{{ else }}
+<p>{{ i18n "no_entries" | default "No content available yet." }}</p>
+{{ end }}
+{{ end }}

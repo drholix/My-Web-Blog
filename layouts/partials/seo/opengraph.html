@@ -5,21 +5,35 @@
 {{ with .Params.cover }}
   {{ $bundleImage := $page.Resources.Get . }}
   {{ if $bundleImage }}
-    {{ $base := $bundleImage }}
-    {{ if eq $bundleImage.MediaType.SubType "svg" }}
-      {{ $base = $bundleImage | resources.Convert "image/png" }}
+    {{ $mediaType := $bundleImage.MediaType }}
+    {{ $main := lower $mediaType.Type }}
+    {{ $sub := lower $mediaType.SubType }}
+    {{ if eq $main "image" }}
+      {{ $base := $bundleImage }}
+      {{ if or (eq $sub "svg") (eq $sub "svg+xml") }}
+        {{ $base = $bundleImage | resources.Convert "image/png" }}
+      {{ end }}
+      {{ with $base.Fit "1200x630" }}
+        {{ $imageResource = . }}
+      {{ end }}
     {{ end }}
-    {{ $imageResource = $base.Fit "1200x630" }}
   {{ end }}
 {{ end }}
 {{ if not $imageResource }}
   {{ with site.Params.opengraph.image }}
     {{ with resources.Get . }}
-      {{ $base := . }}
-      {{ if eq .MediaType.SubType "svg" }}
-        {{ $base = . | resources.Convert "image/png" }}
+      {{ $mediaType := .MediaType }}
+      {{ $main := lower $mediaType.Type }}
+      {{ $sub := lower $mediaType.SubType }}
+      {{ if eq $main "image" }}
+        {{ $base := . }}
+        {{ if or (eq $sub "svg") (eq $sub "svg+xml") }}
+          {{ $base = . | resources.Convert "image/png" }}
+        {{ end }}
+        {{ with $base.Fit "1200x630" }}
+          {{ $imageResource = . }}
+        {{ end }}
       {{ end }}
-      {{ $imageResource = $base.Fit "1200x630" }}
     {{ end }}
   {{ end }}
 {{ end }}

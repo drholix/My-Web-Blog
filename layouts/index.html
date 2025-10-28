@@ -1,0 +1,51 @@
+{{ define "main" }}
+<section class="hero">
+  <h1>{{ site.Params.author.headline | default site.Title }}</h1>
+  <p>{{ site.Params.description }}</p>
+  <div class="meta-inline">
+    <span>{{ i18n "read_blog" | default "Read the blog" }} → <a href="{{ "posts/" | relLangURL }}">{{ i18n "view_all_posts" | default "View all posts" }}</a></span>
+    <span>{{ i18n "view_portfolio" | default "Explore portfolio" }} → <a href="{{ "portfolio/" | relLangURL }}">{{ i18n "portfolio" | default "Portfolio" }}</a></span>
+  </div>
+</section>
+{{ $homeParams := site.Params.home }}
+{{ if $homeParams.showFeatured }}
+  {{ $featured := where site.RegularPages "Params.featured" true | first ($homeParams.featuredLimit | default 3) }}
+  {{ if $featured }}
+  <section style="margin-top:2rem;">
+    <h2>{{ i18n "featured_posts" | default "Featured posts" }}</h2>
+    <div class="grid two-column">
+      {{ range $featured }}
+        <article class="post-card">
+          <h3><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+          <div class="meta-inline">
+            <span>{{ .Date.Format "02 Jan 2006" }}</span>
+            {{ with .ReadingTime }}<span>{{ . }} min read</span>{{ end }}
+          </div>
+          {{ with .Params.summary }}<p>{{ . }}</p>{{ else }}<p>{{ .Summary }}</p>{{ end }}
+        </article>
+      {{ end }}
+    </div>
+  </section>
+  {{ end }}
+{{ end }}
+{{ if $homeParams.showRecent }}
+  {{ $recent := (site.RegularPages.ByDate.Reverse | first ($homeParams.recentLimit | default 4)) }}
+  {{ if $recent }}
+  <section style="margin-top:3rem;">
+    <h2>{{ i18n "recent_posts" | default "Recent posts" }}</h2>
+    <div class="grid two-column">
+      {{ range $recent }}
+        <article class="post-card">
+          <h3><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+          <div class="meta-inline">
+            <span>{{ .Date.Format "02 Jan 2006" }}</span>
+            {{ with .ReadingTime }}<span>{{ . }} min read</span>{{ end }}
+          </div>
+          {{ with .Params.summary }}<p>{{ . }}</p>{{ else }}<p>{{ .Summary }}</p>{{ end }}
+        </article>
+      {{ end }}
+    </div>
+  </section>
+  {{ end }}
+{{ end }}
+{{ end }}

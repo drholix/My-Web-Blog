@@ -1,0 +1,36 @@
+{{ define "main" }}
+<article class="post">
+  <header class="hero">
+    <h1>{{ .Title }}</h1>
+    <div class="meta-inline">
+      <span>{{ .Date.Format "02 Jan 2006" }}</span>
+      {{ with .Lastmod }}<span>{{ i18n "updated" | default "Updated" }} {{ .Format "02 Jan 2006" }}</span>{{ end }}
+      {{ with .ReadingTime }}<span>{{ . }} min read</span>{{ end }}
+    </div>
+    {{ with .Params.tags }}
+    <div class="tag-list">
+      {{ range . }}<a href="{{ (printf "/tags/%s" (urlize .)) | relLangURL }}">#{{ . }}</a>{{ end }}
+    </div>
+    {{ end }}
+  </header>
+  <article class="post-content">
+    {{ .Content }}
+  </article>
+</article>
+<section style="margin-top:3rem;">
+  <h2>{{ i18n "related" | default "Related" }}</h2>
+  {{ $related := site.RegularPages.Related . | first 3 }}
+  {{ if $related }}
+  <div class="grid two-column">
+    {{ range $related }}
+      <div class="post-card">
+        <h3><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+        {{ with .Params.summary }}<p>{{ . }}</p>{{ end }}
+      </div>
+    {{ end }}
+  </div>
+  {{ else }}
+    <p>{{ i18n "no_related" | default "No related content yet." }}</p>
+  {{ end }}
+</section>
+{{ end }}

@@ -1,0 +1,34 @@
+{{ define "main" }}
+<section class="hero">
+  <h1>{{ .Title }}</h1>
+  {{ with .Description }}<p>{{ . }}</p>{{ else }}{{ with .Params.summary }}<p>{{ . }}</p>{{ end }}{{ end }}
+</section>
+{{ if .Pages }}
+{{ $paginator := .Paginate (.Pages) }}
+<div class="grid two-column">
+  {{ range $paginator.Pages }}
+  <article class="post-card">
+    <h2><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
+    <div class="meta-inline">
+      <span>{{ .Date.Format "02 Jan 2006" }}</span>
+      {{ with .ReadingTime }}<span>{{ . }} min read</span>{{ end }}
+    </div>
+    {{ with .Params.summary }}<p>{{ . }}</p>{{ else }}<p>{{ .Summary }}</p>{{ end }}
+    {{ with .Params.tags }}
+    <div class="tag-list">
+      {{ range . }}
+        <a href="{{ (printf "/tags/%s" (urlize .)) | relLangURL }}">#{{ . }}</a>
+      {{ end }}
+    </div>
+    {{ end }}
+  </article>
+  {{ end }}
+</div>
+<div class="meta-inline" style="margin-top:2rem; justify-content:space-between;">
+  {{ if $paginator.HasPrev }}<a href="{{ $paginator.Prev.URL }}">« {{ i18n "newer" | default "Newer" }}</a>{{ end }}
+  {{ if $paginator.HasNext }}<a href="{{ $paginator.Next.URL }}">{{ i18n "older" | default "Older" }} »</a>{{ end }}
+</div>
+{{ else }}
+<p>{{ i18n "no_entries" | default "No content available yet." }}</p>
+{{ end }}
+{{ end }}

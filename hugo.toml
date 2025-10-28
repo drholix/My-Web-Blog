@@ -1,14 +1,13 @@
 baseURL = "https://aliefk.dev/"
 title = "Alief Kurniawan — Blue Team Notes"
 languageCode = "id"
-paginate = 10
 defaultContentLanguage = "id"
 defaultContentLanguageInSubdir = false
 enableRobotsTXT = true
 
-theme = [
-  "github.com/razonyang/hugo-theme-bootstrap/v1"
-]
+[pagination]
+  pagerSize = 10
+
 
 [sitemap]
   changefreq = "weekly"
