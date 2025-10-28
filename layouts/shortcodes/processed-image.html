@@ -1,0 +1,34 @@
+{{ $src := .Get "src" }}
+{{ $alt := .Get "alt" | default "" }}
+{{ $width := .Get "width" | default "960" }}
+{{ $caption := .Get "caption" }}
+{{ $scratch := newScratch }}
+{{ $scratch.Set "width" 960 }}
+{{ with $width }}
+  {{ $parsed := int . }}
+  {{ if gt $parsed 0 }}
+    {{ $scratch.Set "width" $parsed }}
+  {{ end }}
+{{ end }}
+{{ with .Page.Resources.Get $src }}
+  {{ $isSVG := eq .MediaType.SubType "svg" }}
+  {{ if $isSVG }}
+    <figure class="my-4 text-center">
+      <img src="{{ .RelPermalink }}" alt="{{ $alt }}" loading="lazy" decoding="async" />
+      {{ with $caption }}<figcaption class="figure-caption">{{ . }}</figcaption>{{ end }}
+    </figure>
+  {{ else }}
+    {{ $targetWidth := $scratch.Get "width" }}
+    {{ $resized := .Fit (printf "%dx" $targetWidth) }}
+    {{ $webp := $resized | resources.Convert "image/webp" }}
+    <figure class="my-4 text-center">
+      <picture>
+        <source srcset="{{ $webp.RelPermalink }}" type="image/webp">
+        <img src="{{ $resized.RelPermalink }}" width="{{ $resized.Width }}" height="{{ $resized.Height }}" alt="{{ $alt }}" loading="lazy" decoding="async" />
+      </picture>
+      {{ with $caption }}<figcaption class="figure-caption">{{ . }}</figcaption>{{ end }}
+    </figure>
+  {{ end }}
+{{ else }}
+  <p class="text-danger">Image {{ $src }} not found.</p>
+{{ end }}

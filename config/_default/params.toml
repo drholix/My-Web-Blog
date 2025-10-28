@@ -1,0 +1,65 @@
+description = "Catatan dan portofolio SOC/Blue Team dari Alief Kurniawan."
+
+[favicon]
+  svg = "images/favicon.svg"
+  apple = "images/favicon.svg"
+  sizes = []
+
+[author]
+  name = "Alief Kurniawan"
+  headline = "Blue Team Specialist"
+  bio = "SOC analyst focused on incident response, threat hunting, and detection engineering."
+  jobTitle = "Security Operations Center Analyst"
+  location = "Depok, Indonesia"
+  url = "https://aliefk.dev/"
+  email = "hello@aliefk.dev"
+  sameAs = [
+    "https://www.linkedin.com/in/aliefkurniawan/",
+    "https://github.com/aliefk"
+  ]
+
+[color]
+  mode = "auto"
+  switcher = true
+
+[fontSize]
+  enable = true
+  default = "md"
+  choices = ["xs", "sm", "md", "lg", "xl"]
+
+[home]
+  showFeatured = true
+  showRecent = true
+  featuredLimit = 3
+  recentLimit = 4
+
+[seo]
+  titleSeparator = "—"
+  keywords = ["Blue Team", "Cybersecurity", "SOC", "Incident Response", "Threat Hunting", "Wazuh"]
+
+[opengraph]
+  twitterSite = "@aliefk"
+  twitterCard = "summary_large_image"
+  image = "images/og-default.svg"
+
+[analytics]
+  cloudflareToken = ""
+
+[security]
+  [security.turnstile]
+    siteKey = ""
+    widgetTheme = "auto"
+
+[pwa]
+  enable = true
+  themeColor = "#0d6efd"
+  appleTouchIcon = "images/favicon.svg"
+  offlinePage = "/offline.html"
+
+[languages]
+  [languages.id]
+    [languages.id.params]
+      description = "Catatan dan portofolio SOC/Blue Team dari Alief Kurniawan."
+  [languages.en]
+    [languages.en.params]
+      description = "Notes and portfolio pieces from Alief Kurniawan's SOC/Blue Team work."
