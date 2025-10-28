@@ -1,0 +1,68 @@
+baseURL = "https://aliefk.dev/"
+title = "Alief Kurniawan — Blue Team Notes"
+languageCode = "id"
+defaultContentLanguage = "id"
+defaultContentLanguageInSubdir = false
+enableRobotsTXT = true
+
+[pagination]
+  pagerSize = 10
+
+theme = [
+  "github.com/razonyang/hugo-theme-bootstrap"
+]
+
+[sitemap]
+  changefreq = "weekly"
+  priority = 0.5
+  filename = "sitemap.xml"
+
+[taxonomies]
+  category = "categories"
+  tag = "tags"
+
+[permalinks]
+  posts = "/blog/:year/:month/:slug/"
+  portfolio = "/portfolio/:slug/"
+
+[outputs]
+  home = ["HTML", "RSS", "JSON"]
+  section = ["HTML", "RSS"]
+  taxonomy = ["HTML"]
+  term = ["HTML"]
+
+[languages]
+  [languages.id]
+    languageName = "Bahasa Indonesia"
+    title = "Alief Kurniawan — Catatan Blue Team"
+    weight = 1
+  [languages.en]
+    languageName = "English"
+    title = "Alief Kurniawan — Blue Team Notes"
+    weight = 2
+
+[minify]
+  [minify.tdewolff]
+    [minify.tdewolff.css]
+      keepCSS2 = false
+      inlineStyles = "minify"
+    [minify.tdewolff.html]
+      keepComments = false
+    [minify.tdewolff.js]
+      keepVarNames = false
+
+[imaging]
+  anchor = "smart"
+  quality = 85
+
+[markup]
+  [markup.highlight]
+    noClasses = false
+    style = "monokai"
+    guessSyntax = true
+  [markup.goldmark.renderer]
+    unsafe = true
+  [markup.tableOfContents]
+    endLevel = 3
+    ordered = false
+    startLevel = 2
