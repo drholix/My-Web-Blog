@@ -8,7 +8,7 @@ Repositori ini menyiapkan situs statis **Hugo + Hugo Bootstrap (HBS)** dengan ko
 
 | Komponen | Versi minimum | Catatan |
 | --- | --- | --- |
-| Hugo Extended | `0.125.0` | Pastikan `hugo version` menampilkan "Extended". |
+| Hugo Extended | `0.152.2` | Pastikan `hugo version` menampilkan "Extended". |
 | Node.js / npm | Node `18.x` / npm `9.x` | Opsional; dipakai bila ada automasi tambahan. |
 | Git | `>=2.40` | Untuk clone & deploy. |
 | Akses Netlify & Cloudflare | Free Plan | Netlify untuk hosting, Cloudflare sebagai proxy & DNS. |
@@ -56,7 +56,7 @@ defaultContentLanguage = "id"
 defaultContentLanguageInSubdir = false
 enableRobotsTXT = true
 
-theme = ["github.com/razonyang/hugo-theme-bootstrap/v1"]
+theme = ["github.com/razonyang/hugo-theme-bootstrap"]
 
 [sitemap]
   changefreq = "weekly"
@@ -242,7 +242,7 @@ du -sh public/
 - **Build command**: `npm install && hugo --minify` (opsional npm jika diperlukan).
 - **Publish directory**: `public`.
 - **Environment variables**:
-  - `HUGO_VERSION=0.125.0`
+  - `HUGO_VERSION=0.152.2`
   - `HUGO_ENABLEGITINFO=true`
   - `TURNSTILE_SITE_KEY`, `TURNSTILE_SECRET_KEY` (opsional).
 
@@ -253,7 +253,7 @@ du -sh public/
   publish = "public"
 
 [build.environment]
-  HUGO_VERSION = "0.125.0"
+  HUGO_VERSION = "0.152.2"
   HUGO_ENABLEGITINFO = "true"
 
 [context.production]
