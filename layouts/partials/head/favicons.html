@@ -1,0 +1,24 @@
+{{ $favicon := .Site.Params.favicon }}
+{{ if $favicon }}
+  {{ if reflect.IsMap $favicon }}
+    {{ with $favicon.svg }}<link rel="icon" type="image/svg+xml" href="{{ . | relURL }}">{{ end }}
+    {{ with $favicon.ico }}<link rel="icon" type="image/x-icon" href="{{ . | relURL }}">{{ end }}
+    {{ with $favicon.apple }}<link rel="apple-touch-icon" href="{{ . | relURL }}">{{ end }}
+    {{ with $favicon.sizes }}
+      {{ range . }}
+        {{ if reflect.IsMap . }}
+          {{ $rel := default "icon" .rel }}
+          {{ $href := .href | relURL }}
+          {{ $type := default "image/png" .type }}
+          {{ with .sizes }}<link rel="{{ $rel }}" type="{{ $type }}" sizes="{{ . }}" href="{{ $href }}">{{ else }}<link rel="{{ $rel }}" type="{{ $type }}" href="{{ $href }}">{{ end }}
+        {{ else }}
+          <link rel="icon" type="image/png" href="{{ . | relURL }}">
+        {{ end }}
+      {{ end }}
+    {{ end }}
+  {{ else }}
+    <link rel="icon" type="image/svg+xml" href="{{ $favicon | relURL }}">
+  {{ end }}
+{{ else }}
+  <link rel="icon" type="image/svg+xml" href="{{ "images/favicon.svg" | relURL }}">
+{{ end }}
