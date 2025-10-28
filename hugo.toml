@@ -5,8 +5,6 @@ defaultContentLanguage = "id"
 defaultContentLanguageInSubdir = false
 enableRobotsTXT = true
 
-theme = ["github.com/razonyang/hugo-theme-bootstrap"]
-
 [pagination]
   pagerSize = 10
 

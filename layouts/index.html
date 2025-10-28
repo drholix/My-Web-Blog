@@ -1,0 +1,44 @@
+{{ define "main" }}
+  <section class="page-header">
+    <h1>{{ .Site.Params.author.name }} — {{ .Site.Params.author.headline }}</h1>
+    <p>{{ site.Params.description }}</p>
+  </section>
+
+  {{ $posts := where site.RegularPages "Section" "posts" }}
+  {{ $featured := where $posts "Params.featured" true }}
+  {{ $recent := first (site.Params.home.recentLimit | default 4) (sort $posts "Date" "desc") }}
+
+  {{ if gt (len $featured) 0 }}
+    <section>
+      <h2>Featured</h2>
+      <div class="card-grid">
+        {{ range first (site.Params.home.featuredLimit | default 3) $featured }}
+          {{ partial "post-card.html" . }}
+        {{ end }}
+      </div>
+    </section>
+  {{ end }}
+
+  {{ if gt (len $recent) 0 }}
+    <section>
+      <h2>Latest Posts</h2>
+      <div class="card-grid">
+        {{ range $recent }}
+          {{ partial "post-card.html" . }}
+        {{ end }}
+      </div>
+    </section>
+  {{ end }}
+
+  {{ $portfolio := where site.RegularPages "Section" "portfolio" }}
+  {{ if gt (len $portfolio) 0 }}
+    <section>
+      <h2>Recent Portfolio</h2>
+      <div class="card-grid">
+        {{ range first 3 (sort $portfolio "Date" "desc") }}
+          {{ partial "portfolio-card.html" . }}
+        {{ end }}
+      </div>
+    </section>
+  {{ end }}
+{{ end }}

@@ -10,7 +10,3 @@
   [[module.mounts]]
     source = "static"
     target = "static"
-
-  [[module.imports]]
-    path = "github.com/razonyang/hugo-theme-bootstrap"
-    version = "v1.13.2"

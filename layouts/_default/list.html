@@ -1,0 +1,16 @@
+{{ define "main" }}
+  <section class="page-header">
+    <h1>{{ .Title }}</h1>
+    {{ with .Params.description }}<p>{{ . }}</p>{{ end }}
+  </section>
+  <div class="card-grid">
+    {{ range .Paginator.Pages }}
+      {{ if eq .Section "portfolio" }}
+        {{ partial "portfolio-card.html" . }}
+      {{ else }}
+        {{ partial "post-card.html" . }}
+      {{ end }}
+    {{ end }}
+  </div>
+  {{ template "partials/pagination.html" . }}
+{{ end }}

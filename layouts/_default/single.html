@@ -1,0 +1,22 @@
+{{ define "main" }}
+  <article class="post">
+    <header class="page-header">
+      <h1>{{ .Title }}</h1>
+      <div class="post-meta">
+        {{ with .Date }}<span>{{ .Format "02 Jan 2006" }}</span>{{ end }}
+        {{ with .ReadingTime }}<span>{{ . }} min read</span>{{ end }}
+        {{ with .Params.tags }}<span>{{ delimit . ", " }}</span>{{ end }}
+      </div>
+    </header>
+    <div class="post-content">
+      {{ .Content }}
+    </div>
+    {{ if gt (len .Translations) 0 }}
+      <aside class="alert alert--info">
+        <p>Available in:
+          {{ range .Translations }}<a href="{{ .RelPermalink }}">{{ .Lang | upper }}</a> {{ end }}
+        </p>
+      </aside>
+    {{ end }}
+  </article>
+{{ end }}

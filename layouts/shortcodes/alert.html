@@ -1,6 +1,6 @@
 {{ $type := .Get "type" | default "info" }}
 {{ $title := .Get "title" }}
-<div class="alert alert-{{ $type }}" role="alert">
+<div class="alert alert--{{ $type }}" role="alert">
   {{ with $title }}<h5 class="alert-heading">{{ . }}</h5>{{ end }}
   <div>{{ .Inner | markdownify }}</div>
 </div>

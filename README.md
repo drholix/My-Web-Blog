@@ -1,6 +1,6 @@
 # aliefk.dev — Hugo Bilingual Blueprint (ID/EN)
 
-Repositori ini menyiapkan situs statis **Hugo + tema Hugo Bootstrap (HBS)** dengan konten dwibahasa (Indonesia & Inggris), siap deploy di **Netlify** dan diamankan oleh **Cloudflare**. Seluruh panduan di bawah berfungsi sebagai _runbook_ QA + DevOps: mulai dari setup lokal, konfigurasi inti, alur konten, hingga checklist produksi.
+Repositori ini menyiapkan situs statis **Hugo** dengan tata letak kustom yang tetap mengadopsi pola komponen ala Hugo Bootstrap (navigasi responsif, mode terang/gelap, pengaturan ukuran font) tanpa bergantung pada modul tema eksternal. Seluruh panduan di bawah berfungsi sebagai _runbook_ QA + DevOps: mulai dari setup lokal, konfigurasi inti, alur konten, hingga checklist produksi untuk rilis di **Netlify** yang diproksi oleh **Cloudflare**.
 
 ---
 
