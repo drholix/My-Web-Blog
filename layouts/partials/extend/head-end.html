@@ -1,0 +1,12 @@
+{{ $rss := site.Home.OutputFormats.Get "RSS" }}
+{{ if $rss }}
+<link rel="alternate" type="application/rss+xml" title="{{ site.Title }}" href="{{ $rss.RelPermalink | absURL }}">
+{{ end }}
+{{ if site.Params.pwa.enable }}
+<link rel="manifest" href="{{ "manifest.webmanifest" | relURL }}">
+<meta name="theme-color" content="{{ site.Params.pwa.themeColor | default "#0d6efd" }}">
+{{ $appleIcon := site.Params.pwa.appleTouchIcon | default "images/favicon.svg" }}
+<link rel="apple-touch-icon" href="{{ $appleIcon | absURL }}">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+{{ end }}

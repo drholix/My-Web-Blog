@@ -1,0 +1,92 @@
+{{ $title := .Title | default site.Title }}
+{{ $description := cond (ne .Description "") .Description (site.Params.description | default site.Title) }}
+{{ $imageResource := nil }}
+{{ $page := . }}
+{{ with .Params.cover }}
+  {{ $bundleImage := $page.Resources.Get . }}
+  {{ if $bundleImage }}
+    {{ $base := $bundleImage }}
+    {{ if eq $bundleImage.MediaType.SubType "svg" }}
+      {{ $base = $bundleImage | resources.Convert "image/png" }}
+    {{ end }}
+    {{ $imageResource = $base.Fit "1200x630" }}
+  {{ end }}
+{{ end }}
+{{ if not $imageResource }}
+  {{ with site.Params.opengraph.image }}
+    {{ with resources.Get . }}
+      {{ $base := . }}
+      {{ if eq .MediaType.SubType "svg" }}
+        {{ $base = . | resources.Convert "image/png" }}
+      {{ end }}
+      {{ $imageResource = $base.Fit "1200x630" }}
+    {{ end }}
+  {{ end }}
+{{ end }}
+<meta property="og:title" content="{{ $title }}" />
+<meta property="og:description" content="{{ $description }}" />
+<meta property="og:type" content="{{ if .IsPage }}article{{ else }}website{{ end }}" />
+<meta property="og:url" content="{{ .Permalink }}" />
+{{ with $imageResource }}
+  <meta property="og:image" content="{{ .RelPermalink | absURL }}" />
+  <meta property="og:image:width" content="{{ .Width }}" />
+  <meta property="og:image:height" content="{{ .Height }}" />
+  <meta property="og:image:type" content="{{ .MediaType.Type }}/{{ .MediaType.SubType }}" />
+{{ end }}
+<meta name="twitter:card" content="{{ site.Params.opengraph.twitterCard | default "summary" }}" />
+{{ with site.Params.opengraph.twitterSite }}<meta name="twitter:site" content="{{ . }}" />{{ end }}
+
+{{/* Structured data for Person (site-wide) */}}
+{{ $person := dict "@context" "https://schema.org" "@type" "Person" "name" (site.Params.author.name | default site.Title) }}
+{{ with site.Params.author.bio }}
+  {{ $person = merge $person (dict "description" .) }}
+{{ end }}
+{{ with site.Params.author.jobTitle }}
+  {{ $person = merge $person (dict "jobTitle" .) }}
+{{ end }}
+{{ with site.Params.author.url }}
+  {{ $person = merge $person (dict "url" .) }}
+{{ end }}
+{{ with site.Params.author.email }}
+  {{ $person = merge $person (dict "email" (printf "mailto:%s" .)) }}
+{{ end }}
+{{ with site.Params.author.location }}
+  {{ $person = merge $person (dict "homeLocation" (dict "@type" "Place" "name" .)) }}
+{{ end }}
+{{ with site.Params.author.sameAs }}
+  {{ $person = merge $person (dict "sameAs" .) }}
+{{ end }}
+<script type="application/ld+json">{{ $person | jsonify (dict "indent" "  ") | safeJS }}</script>
+
+{{ if and .IsPage (eq .Section "posts") }}
+  {{ $imageURL := "" }}
+  {{ with $imageResource }}
+    {{ $imageURL = .Permalink }}
+  {{ end }}
+  {{ $published := .PublishDate | default .Date }}
+  {{ $modified := .Lastmod | default $published }}
+  {{ $blogPosting := dict
+      "@context" "https://schema.org"
+      "@type" "BlogPosting"
+      "headline" $title
+      "description" $description
+      "inLanguage" .Lang
+      "datePublished" ($published.Format "2006-01-02T15:04:05Z07:00")
+      "dateModified" ($modified.Format "2006-01-02T15:04:05Z07:00")
+      "mainEntityOfPage" (dict "@type" "WebPage" "@id" .Permalink)
+      "url" .Permalink
+      "wordCount" .WordCount
+      "author" (dict "@type" "Person" "name" (site.Params.author.name | default site.Title))
+      "publisher" (dict "@type" "Organization" "name" site.Title "url" (site.BaseURL | default .Permalink))
+    }}
+  {{ with $imageURL }}
+    {{ $blogPosting = merge $blogPosting (dict "image" (slice .)) }}
+  {{ end }}
+  {{ with .Params.categories }}
+    {{ $blogPosting = merge $blogPosting (dict "articleSection" (index . 0)) }}
+  {{ end }}
+  {{ with .Params.tags }}
+    {{ $blogPosting = merge $blogPosting (dict "keywords" (delimit . ", ")) }}
+  {{ end }}
+  <script type="application/ld+json">{{ $blogPosting | jsonify (dict "indent" "  ") | safeJS }}</script>
+{{ end }}
