@@ -1,0 +1,44 @@
+[sidebar_profile]
+other = "Penulis"
+
+[sidebar_categories]
+other = "Kategori"
+
+[sidebar_archives]
+other = "Arsip"
+
+[sidebar_featured]
+other = "Pilihan"
+
+[sidebar_recent]
+other = "Terbaru"
+
+[sidebar_tags]
+other = "Tag"
+
+[sidebar_portfolio]
+other = "Portofolio"
+
+[latest_posts]
+other = "Tulisan Terbaru"
+
+[latest_posts_desc]
+other = "Catatan SOC, playbook incident response, dan eksperimen blue team."
+
+[latest_posts_empty]
+other = "Konten segera hadir. Nantikan catatan blue team berikutnya."
+
+[recent_portfolio]
+other = "Portofolio Terkini"
+
+[footer_tagline]
+other = "Ditenagai Hugo dengan tema kustom terinspirasi dari josusb.com."
+
+[sidebar_cta_title]
+other = "Tetap Terbaru"
+
+[sidebar_cta_body]
+other = "Berlangganan RSS atau ikuti kanal favoritmu untuk catatan blue team lainnya."
+
+[sidebar_cta_rss]
+other = "Umpan RSS"

@@ -1,16 +1,30 @@
 {{ define "main" }}
-  <section class="page-header">
+  {{ $source := .Pages }}
+  {{ if or (eq .Kind "taxonomy") (eq .Kind "term") }}
+    {{ $source = .Data.Pages }}
+  {{ end }}
+  {{ $paginator := .Paginate $source }}
+  <section class="section-header">
     <h1>{{ .Title }}</h1>
     {{ with .Params.description }}<p>{{ . }}</p>{{ end }}
   </section>
-  <div class="card-grid">
-    {{ range .Paginator.Pages }}
-      {{ if eq .Section "portfolio" }}
+  {{ $pages := $paginator.Pages }}
+  {{ if eq .Section "portfolio" }}
+    <div class="portfolio-feed">
+      {{ range $pages }}
         {{ partial "portfolio-card.html" . }}
-      {{ else }}
-        {{ partial "post-card.html" . }}
       {{ end }}
-    {{ end }}
-  </div>
-  {{ template "partials/pagination.html" . }}
+    </div>
+  {{ else }}
+    <div class="post-feed">
+      {{ range $pages }}
+        {{ if eq .Section "portfolio" }}
+          {{ partial "portfolio-card.html" . }}
+        {{ else }}
+          {{ partial "post-card.html" . }}
+        {{ end }}
+      {{ end }}
+    </div>
+  {{ end }}
+  {{ partial "pagination.html" (dict "Paginator" $paginator) }}
 {{ end }}

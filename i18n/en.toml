@@ -1,0 +1,44 @@
+[sidebar_profile]
+other = "Author"
+
+[sidebar_categories]
+other = "Categories"
+
+[sidebar_archives]
+other = "Archives"
+
+[sidebar_featured]
+other = "Featured Posts"
+
+[sidebar_recent]
+other = "Recent Posts"
+
+[sidebar_tags]
+other = "Tags"
+
+[sidebar_portfolio]
+other = "Portfolio"
+
+[latest_posts]
+other = "Latest Posts"
+
+[latest_posts_desc]
+other = "Deep dives into SOC tooling, blue-team playbooks, and day-to-day incident response."
+
+[latest_posts_empty]
+other = "Content is on its way. Stay tuned for blue-team breakdowns."
+
+[recent_portfolio]
+other = "Recent Portfolio"
+
+[footer_tagline]
+other = "Powered by Hugo with a custom blue-team theme inspired by josusb.com."
+
+[sidebar_cta_title]
+other = "Stay Updated"
+
+[sidebar_cta_body]
+other = "Subscribe via RSS or follow on your favourite platform for more blue-team notes."
+
+[sidebar_cta_rss]
+other = "RSS Feed"

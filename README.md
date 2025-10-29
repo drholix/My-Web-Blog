@@ -1,6 +1,6 @@
 # aliefk.dev — Hugo Bilingual Blueprint (ID/EN)
 
-Repositori ini menyiapkan situs statis **Hugo** dengan tata letak kustom yang tetap mengadopsi pola komponen ala Hugo Bootstrap (navigasi responsif, mode terang/gelap, pengaturan ukuran font) tanpa bergantung pada modul tema eksternal. Seluruh panduan di bawah berfungsi sebagai _runbook_ QA + DevOps: mulai dari setup lokal, konfigurasi inti, alur konten, hingga checklist produksi untuk rilis di **Netlify** yang diproksi oleh **Cloudflare**.
+Repositori ini menyiapkan situs statis **Hugo** dengan tata letak kustom yang meniru struktur, hierarki konten, dan nuansa visual josusb.com (navigasi dua kolom dengan hero, feed kartu, dan sidebar kaya widget) sekaligus mempertahankan kontrol bawaan seperti mode terang/gelap dan pengaturan ukuran font tanpa bergantung pada modul tema eksternal. Seluruh panduan di bawah berfungsi sebagai _runbook_ QA + DevOps: mulai dari setup lokal, konfigurasi inti, alur konten, hingga checklist produksi untuk rilis di **Netlify** yang diproksi oleh **Cloudflare**.
 
 ---
 
@@ -369,7 +369,7 @@ Lakukan regresi berikut setelah setiap perubahan besar.
 
 | Gejala | Penyebab Umum | Solusi |
 | --- | --- | --- |
-| Halaman kosong saat build | Tema HBS belum terunduh | Jalankan `hugo mod tidy` atau `hugo --gc --minify` dengan koneksi internet untuk mengunduh modul `github.com/razonyang/hugo-theme-bootstrap/v1`. |
+| Halaman kosong saat build | Layout kustom belum ditemukan atau resource gambar hilang | Pastikan direktori `layouts/` tersalin lengkap dan berkas cover berada di setiap bundle konten. |
 | Turnstile tidak muncul | Site key kosong | Isi `params.security.turnstile.siteKey` atau env var. |
 | CSP block Cloudflare Analytics | `script-src` kurang domain | Tambahkan `https://static.cloudflareinsights.com` ke CSP. |
 | Lighthouse skor rendah | Gambar terlalu besar / font eksternal | Optimasi WebP & self-host fonts. |
@@ -460,7 +460,7 @@ jobs:
 ## 13. Lisensi & Atribusi
 
 - Kode dalam repositori ini berada di bawah lisensi MIT (lihat `LICENSE`).
-- Tema utama: [Hugo Bootstrap (HBS)](https://github.com/razonyang/hugo-theme-bootstrap) melalui Hugo Modules.
+- Desain kustom terinspirasi dari tata letak josusb.com dan dibangun dengan komponen Hugo standar (tanpa modul tema eksternal).
 - Ikon/gambar mengikuti lisensi masing-masing sumber.
 
 Selamat membangun pusat knowledge Blue Team Anda! 🚀

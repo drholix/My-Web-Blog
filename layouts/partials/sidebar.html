@@ -1,0 +1,127 @@
+{{ $site := .Site }}
+{{ $params := $site.Params }}
+{{ $author := $params.author }}
+{{ $posts := where $site.RegularPages "Section" "posts" }}
+{{ $posts = where $posts "Lang" .Lang }}
+{{ $featured := where $posts "Params.featured" true }}
+{{ $recent := first 5 (sort $posts "Date" "desc") }}
+{{ $portfolio := where $site.RegularPages "Section" "portfolio" }}
+{{ $portfolio = where $portfolio "Lang" .Lang }}
+
+<div class="widget widget--profile">
+  <div class="widget__title">{{ i18n "sidebar_profile" | default "Author" }}</div>
+  <div class="profile-card">
+    <div class="profile-card__avatar" aria-hidden="true">{{ with $author.name }}{{ (substr . 0 1) | upper }}{{ else }}{{ (substr $site.Title 0 1) | upper }}{{ end }}</div>
+    <div class="profile-card__body">
+      <strong>{{ $author.name | default $site.Title }}</strong>
+      {{ with $author.headline }}<p>{{ . }}</p>{{ end }}
+      {{ with $author.location }}<p class="profile-card__location">{{ . }}</p>{{ end }}
+      <ul class="profile-card__links">
+        {{ with $author.url }}<li><a href="{{ . }}" rel="me">Website</a></li>{{ end }}
+        {{ with $author.sameAs }}
+          {{ range . }}<li><a href="{{ . }}" rel="me">{{ . | replaceRE "https?://(www\\.)?" "" }}</a></li>{{ end }}
+        {{ end }}
+      </ul>
+    </div>
+  </div>
+</div>
+
+{{ $categories := index $site.Taxonomies "categories" }}
+{{ if $categories }}
+  <div class="widget">
+    <div class="widget__title">{{ i18n "sidebar_categories" | default "Categories" }}</div>
+    <ul class="widget__list">
+      {{ range $name, $pages := sort $categories "-Count" }}
+        {{ $localized := where $pages.Pages "Lang" $.Lang }}
+        {{ if gt (len $localized) 0 }}
+          <li>
+            <a href="{{ (index $localized 0).RelPermalink }}">{{ humanize $name }}</a>
+            <span>{{ len $localized }}</span>
+          </li>
+        {{ end }}
+      {{ end }}
+    </ul>
+  </div>
+{{ end }}
+
+{{ if gt (len $posts) 0 }}
+  {{ $groups := ($posts | GroupByDate "January 2006") }}
+  <div class="widget">
+    <div class="widget__title">{{ i18n "sidebar_archives" | default "Archives" }}</div>
+    <ul class="widget__list">
+      {{ range first 6 $groups }}
+        <li>
+          <a href="{{ (index .Pages 0).RelPermalink }}">{{ .Key }}</a>
+          <span>{{ len .Pages }}</span>
+        </li>
+      {{ end }}
+    </ul>
+  </div>
+{{ end }}
+{{ if gt (len $featured) 0 }}
+  <div class="widget">
+    <div class="widget__title">{{ i18n "sidebar_featured" | default "Featured Posts" }}</div>
+    <ul class="widget__articles">
+      {{ range first 4 (sort $featured "Date" "desc") }}
+        <li>
+          <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+          <span>{{ .Date.Format "02 Jan 2006" }}</span>
+        </li>
+      {{ end }}
+    </ul>
+  </div>
+{{ end }}
+
+{{ if gt (len $recent) 0 }}
+  <div class="widget">
+    <div class="widget__title">{{ i18n "sidebar_recent" | default "Recent Posts" }}</div>
+    <ul class="widget__articles">
+      {{ range $recent }}
+        <li>
+          <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+          <span>{{ .Date.Format "02 Jan 2006" }}</span>
+        </li>
+      {{ end }}
+    </ul>
+  </div>
+{{ end }}
+
+{{ $tags := index $site.Taxonomies "tags" }}
+{{ if $tags }}
+  <div class="widget widget--tags">
+    <div class="widget__title">{{ i18n "sidebar_tags" | default "Tags" }}</div>
+    <div class="tag-cloud">
+      {{ range $name, $pages := sort $tags "-Count" }}
+        {{ $localized := where $pages.Pages "Lang" $.Lang }}
+        {{ if gt (len $localized) 0 }}
+          <a href="{{ (index $localized 0).RelPermalink }}" data-count="{{ len $localized }}">#{{ $name }}</a>
+        {{ end }}
+      {{ end }}
+    </div>
+  </div>
+{{ end }}
+
+{{ if gt (len $portfolio) 0 }}
+  <div class="widget">
+    <div class="widget__title">{{ i18n "sidebar_portfolio" | default "Portfolio" }}</div>
+    <ul class="widget__articles">
+      {{ range first 3 (sort $portfolio "Date" "desc") }}
+        <li>
+          <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+          <span>{{ .Date.Format "2006" }}</span>
+        </li>
+      {{ end }}
+    </ul>
+  </div>
+{{ end }}
+
+<div class="widget widget--cta">
+  <div class="widget__title">{{ i18n "sidebar_cta_title" | default "Stay Updated" }}</div>
+  <p>{{ i18n "sidebar_cta_body" | default "Subscribe via RSS or follow on your favourite platform for more blue-team notes." }}</p>
+  <div class="widget__cta-links">
+    <a class="btn" href="/index.xml">{{ i18n "sidebar_cta_rss" | default "RSS Feed" }}</a>
+    {{ with $author.sameAs }}
+      {{ range first 2 . }}<a class="btn btn--ghost" href="{{ . }}">{{ . | replaceRE "https?://(www\\.)?" "" }}</a>{{ end }}
+    {{ end }}
+  </div>
+</div>

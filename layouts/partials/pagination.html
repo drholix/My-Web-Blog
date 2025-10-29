@@ -1,7 +1,13 @@
-{{ if gt .Paginator.TotalPages 1 }}
+{{ $p := .Paginator }}
+{{ if not $p }}
+  {{ if (isset . "Paginator") }}
+    {{ $p = index . "Paginator" }}
+  {{ end }}
+{{ end }}
+{{ if and $p (gt $p.TotalPages 1) }}
   <nav class="pagination" aria-label="Pagination">
-    {{ with .Paginator.Prev }}<a class="pagination__prev" href="{{ .URL }}">&larr; Previous</a>{{ end }}
-    <span class="pagination__details">Page {{ .Paginator.PageNumber }} of {{ .Paginator.TotalPages }}</span>
-    {{ with .Paginator.Next }}<a class="pagination__next" href="{{ .URL }}">Next &rarr;</a>{{ end }}
+    {{ with $p.Prev }}<a class="pagination__prev" href="{{ .URL }}">&larr; Previous</a>{{ end }}
+    <span class="pagination__details">Page {{ $p.PageNumber }} of {{ $p.TotalPages }}</span>
+    {{ with $p.Next }}<a class="pagination__next" href="{{ .URL }}">Next &rarr;</a>{{ end }}
   </nav>
 {{ end }}
