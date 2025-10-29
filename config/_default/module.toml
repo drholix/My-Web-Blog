@@ -1,0 +1,12 @@
+[module]
+  [module.hugoVersion]
+    extended = true
+    min = "0.152.2"
+
+  [[module.mounts]]
+    source = "assets"
+    target = "assets"
+
+  [[module.mounts]]
+    source = "static"
+    target = "static"

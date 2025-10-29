@@ -1,0 +1,72 @@
+{{ define "main" }}
+  {{ $posts := where .Site.RegularPages "Section" "posts" }}
+  {{ $posts = where $posts "Lang" .Lang }}
+  {{ if gt (len $posts) 0 }}
+    {{ $featured := sort (where $posts "Params.featured" true) "Date" "desc" }}
+    {{ $sorted := sort $posts "Date" "desc" }}
+    {{ $hero := cond (gt (len $featured) 0) (index $featured 0) (index $sorted 0) }}
+    {{ with $hero }}
+      {{ $coverPath := .Params.cover }}
+      {{ $cover := cond $coverPath (.Resources.GetMatch $coverPath) nil }}
+      {{ if and (not $cover) $coverPath }}
+        {{ with resources.Get $coverPath }}{{ $cover = . }}{{ end }}
+      {{ end }}
+      {{ $heroURL := "" }}
+      {{ if $cover }}
+        {{ if eq (lower $cover.MediaType.Type) "image" }}
+          {{ $sub := lower $cover.MediaType.SubType }}
+          {{ if or (eq $sub "svg") (eq $sub "svg+xml") }}
+            {{ $heroURL = $cover.RelPermalink }}
+          {{ else }}
+            {{ with $cover.Fit "1200x600" }}{{ $heroURL = .RelPermalink }}{{ end }}
+          {{ end }}
+        {{ end }}
+      {{ end }}
+      {{ if eq $heroURL "" }}
+        {{ $heroURL = "/images/dashboard-card.svg" }}
+      {{ end }}
+      <section class="hero" style="--hero-image: url('{{ $heroURL }}')">
+        <div class="hero__content">
+          <span class="hero__eyebrow">{{ (index (.Params.categories | default (slice "Featured")) 0) | humanize }}</span>
+          <h1><a href="{{ .RelPermalink }}">{{ .Title }}</a></h1>
+          {{ with .Summary }}<p>{{ . | plainify }}</p>{{ end }}
+          <ul class="hero__meta">
+            {{ with .Date }}<li>{{ .Format "02 Jan 2006" }}</li>{{ end }}
+            {{ with .ReadingTime }}<li>{{ . }} min read</li>{{ end }}
+          </ul>
+        </div>
+      </section>
+    {{ end }}
+
+    <section class="section-header">
+      <h2>{{ i18n "latest_posts" | default "Latest Posts" }}</h2>
+      <p>{{ i18n "latest_posts_desc" | default "Deep dives into SOC tooling, blue-team playbooks, and day-to-day incident response." }}</p>
+    </section>
+
+    {{ $paginator := .Paginate $posts }}
+    <div class="post-feed">
+      {{ range $paginator.Pages }}
+        {{ partial "post-card.html" . }}
+      {{ end }}
+    </div>
+    {{ partial "pagination.html" (dict "Paginator" $paginator) }}
+  {{ else }}
+    <section class="section-header">
+      <h2>{{ i18n "latest_posts" | default "Latest Posts" }}</h2>
+      <p>{{ i18n "latest_posts_empty" | default "Content is on its way. Stay tuned for blue-team breakdowns." }}</p>
+    </section>
+  {{ end }}
+
+  {{ $portfolio := where .Site.RegularPages "Section" "portfolio" }}
+  {{ $portfolio = where $portfolio "Lang" .Lang }}
+  {{ if gt (len $portfolio) 0 }}
+    <section class="section-header section-header--compact">
+      <h2>{{ i18n "recent_portfolio" | default "Recent Portfolio" }}</h2>
+    </section>
+    <div class="portfolio-feed">
+      {{ range first 3 (sort $portfolio "Date" "desc") }}
+        {{ partial "portfolio-card.html" . }}
+      {{ end }}
+    </div>
+  {{ end }}
+{{ end }}

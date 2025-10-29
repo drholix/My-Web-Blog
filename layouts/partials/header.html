@@ -1,0 +1,44 @@
+<header class="site-header">
+  <div class="site-header__inner">
+    <div class="site-brand">
+      <a class="brand" href="{{ .Site.Home.RelPermalink }}">{{ .Site.Title }}</a>
+      <p class="tagline">{{ .Site.Params.author.headline }}</p>
+    </div>
+    <nav class="site-nav" aria-label="Main navigation">
+      {{ range .Menus.main }}
+        <a href="{{ .URL }}"{{ if $.IsMenuCurrent "main" . }} aria-current="page"{{ end }}>{{ .Name }}</a>
+      {{ end }}
+    </nav>
+    <div class="header-controls">
+      <div class="control">
+        <label for="color-mode-toggle">Theme</label>
+        <select id="color-mode-toggle">
+          <option value="auto">Auto</option>
+          <option value="light">Light</option>
+          <option value="dark">Dark</option>
+        </select>
+      </div>
+      {{ if site.Params.fontSize.enable }}
+        <div class="control">
+          <label for="font-scale-toggle">Font</label>
+          <select id="font-scale-toggle">
+            {{ range site.Params.fontSize.choices }}
+              <option value="{{ . }}"{{ if eq . (site.Params.fontSize.default | default "md") }} selected{{ end }}>{{ upper . }}</option>
+            {{ end }}
+          </select>
+        </div>
+      {{ end }}
+      {{ if gt (len .AllTranslations) 1 }}
+        <div class="control">
+          <label for="language-switcher">Lang</label>
+          <select id="language-switcher">
+            {{ range .AllTranslations }}
+              <option value="{{ .RelPermalink }}"{{ if eq .Lang $.Lang }} selected{{ end }}>{{ .Language.LanguageName }}</option>
+            {{ end }}
+          </select>
+        </div>
+      {{ end }}
+      <a class="control control--icon" href="{{ "search" | relLangURL }}" aria-label="Search">🔍</a>
+    </div>
+  </div>
+</header>

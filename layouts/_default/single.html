@@ -1,0 +1,42 @@
+{{ define "main" }}
+  <article class="post">
+    <header class="post-header">
+      {{ $categories := .Params.categories | default (slice) }}
+      {{ if gt (len $categories) 0 }}<span class="post-header__eyebrow">{{ index $categories 0 | humanize }}</span>{{ end }}
+      <h1>{{ .Title }}</h1>
+      <ul class="post-meta">
+        {{ with .Date }}<li>{{ .Format "02 Jan 2006" }}</li>{{ end }}
+        {{ with .ReadingTime }}<li>{{ . }} min read</li>{{ end }}
+        {{ with .WordCount }}<li>{{ . }} words</li>{{ end }}
+      </ul>
+      {{ with .Summary }}<p class="post-summary">{{ . | plainify }}</p>{{ end }}
+    </header>
+    {{ $coverPath := .Params.cover }}
+    {{ $cover := cond $coverPath (.Resources.GetMatch $coverPath) nil }}
+    {{ if and (not $cover) $coverPath }}
+      {{ with resources.Get $coverPath }}{{ $cover = . }}{{ end }}
+    {{ end }}
+    {{ if $cover }}
+      {{ if eq (lower $cover.MediaType.Type) "image" }}
+        {{ $sub := lower $cover.MediaType.SubType }}
+        {{ if or (eq $sub "svg") (eq $sub "svg+xml") }}
+          <figure class="post-hero"><img src="{{ $cover.RelPermalink }}" alt="{{ .Title }} cover" loading="lazy" decoding="async"></figure>
+        {{ else }}
+          {{ with $cover.Fit "1280x720" }}
+            <figure class="post-hero"><img src="{{ .RelPermalink }}" width="{{ .Width }}" height="{{ .Height }}" alt="{{ $.Title }} cover" loading="lazy" decoding="async"></figure>
+          {{ end }}
+        {{ end }}
+      {{ end }}
+    {{ end }}
+    <div class="post-content">
+      {{ .Content }}
+    </div>
+    {{ if gt (len .Translations) 0 }}
+      <aside class="alert alert--info">
+        <p>Available in:
+          {{ range .Translations }}<a href="{{ .RelPermalink }}">{{ .Lang | upper }}</a> {{ end }}
+        </p>
+      </aside>
+    {{ end }}
+  </article>
+{{ end }}

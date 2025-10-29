@@ -1,0 +1,13 @@
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <div>
+      <p>&copy; {{ now.Year }} {{ .Site.Params.author.name | default .Site.Title }}.</p>
+      <p>{{ i18n "footer_tagline" | default "Powered by Hugo with a custom blue-team theme inspired by josusb.com." }}</p>
+    </div>
+    <div class="footer-links">
+      <a href="/index.xml">RSS</a>
+      <a href="/sitemap.xml">Sitemap</a>
+      <a href="/offline.html">Offline</a>
+    </div>
+  </div>
+</footer>
