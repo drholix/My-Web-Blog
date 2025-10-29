@@ -100,19 +100,24 @@
 {{ end }}
 
 {{/* Schema.org BreadcrumbList metadata */}}
-{{ $breadcrumbs := slice (dict "@type" "ListItem" "position" 1 "name" .Site.Title "item" (.Site.BaseURL | default .Site.Home.Permalink)) }}
+{{ $breadcrumbScratch := newScratch }}
+{{ $breadcrumbScratch.Set "items" (slice (dict "@type" "ListItem" "position" 1 "name" .Site.Title "item" (.Site.BaseURL | default .Site.Home.Permalink))) }}
 {{ $position := 2 }}
 {{ if $page.IsPage }}
   {{ with $page.CurrentSection }}
     {{ if and (ne .Kind "home") (ne .RelPermalink $.Site.Home.RelPermalink) }}
-      {{ $breadcrumbs = append $breadcrumbs (dict "@type" "ListItem" "position" $position "name" .Title "item" (.Permalink | absURL)) }}
+      {{ $items := append ($breadcrumbScratch.Get "items") (dict "@type" "ListItem" "position" $position "name" .Title "item" (.Permalink | absURL)) }}
+      {{ $breadcrumbScratch.Set "items" $items }}
       {{ $position = add $position 1 }}
     {{ end }}
   {{ end }}
-  {{ $breadcrumbs = append $breadcrumbs (dict "@type" "ListItem" "position" $position "name" ($page.Title | default $.Site.Title) "item" ($page.Permalink | absURL)) }}
+  {{ $items := append ($breadcrumbScratch.Get "items") (dict "@type" "ListItem" "position" $position "name" ($page.Title | default $.Site.Title) "item" ($page.Permalink | absURL)) }}
+  {{ $breadcrumbScratch.Set "items" $items }}
 {{ else if or (eq $page.Kind "section") (eq $page.Kind "term") (eq $page.Kind "taxonomy") }}
-  {{ $breadcrumbs = append $breadcrumbs (dict "@type" "ListItem" "position" $position "name" ($page.Title | default $.Site.Title) "item" ($page.Permalink | absURL)) }}
+  {{ $items := append ($breadcrumbScratch.Get "items") (dict "@type" "ListItem" "position" $position "name" ($page.Title | default $.Site.Title) "item" ($page.Permalink | absURL)) }}
+  {{ $breadcrumbScratch.Set "items" $items }}
 {{ end }}
+{{ $breadcrumbs := $breadcrumbScratch.Get "items" }}
 {{ if gt (len $breadcrumbs) 1 }}
   {{ $breadcrumbJSON := dict "@context" "https://schema.org" "@type" "BreadcrumbList" "itemListElement" $breadcrumbs }}
   <script type="application/ld+json">{{ $breadcrumbJSON | jsonify (dict "indent" "  ") | safeJS }}</script>

@@ -12,7 +12,7 @@
 {{ $pageDescription := .Params.description | default .Summary | default (index $langParams "description") | default $params.description | default "" }}
 {{ $pageDescription = ($pageDescription | plainify) }}
 {{ if gt (len $pageDescription) 160 }}
-  {{ $pageDescription = truncate 160 $pageDescription }}
+  {{ $pageDescription = ($pageDescription | truncate 160) }}
 {{ end }}
 {{ $canonical := .Permalink }}
 {{ $imagePath := .Params.cover | default $params.opengraph.image }}

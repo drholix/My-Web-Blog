@@ -28,24 +28,32 @@
 
 {{ $categories := index $site.Taxonomies "categories" }}
 {{ if $categories }}
-  <div class="widget">
-    <div class="widget__title">{{ i18n "sidebar_categories" | default "Categories" }}</div>
-    <ul class="widget__list">
-      {{ range $name, $pages := sort $categories "-Count" }}
-        {{ $localized := where $pages.Pages "Lang" $.Lang }}
-        {{ if gt (len $localized) 0 }}
+  {{ $categoryItems := slice }}
+  {{ range $name, $taxonomy := $categories }}
+    {{ $localized := where $taxonomy.Pages "Lang" $.Lang }}
+    {{ if gt (len $localized) 0 }}
+      {{ $categoryItems = append $categoryItems (dict "name" $name "pages" $localized "count" (len $localized)) }}
+    {{ end }}
+  {{ end }}
+  {{ if gt (len $categoryItems) 0 }}
+    {{ $categoryItems = sort $categoryItems "count" "desc" }}
+    <div class="widget">
+      <div class="widget__title">{{ i18n "sidebar_categories" | default "Categories" }}</div>
+      <ul class="widget__list">
+        {{ range $categoryItems }}
+          {{ $pages := index . "pages" }}
           <li>
-            <a href="{{ (index $localized 0).RelPermalink }}">{{ humanize $name }}</a>
-            <span>{{ len $localized }}</span>
+            <a href="{{ (index $pages 0).RelPermalink }}">{{ humanize (index . "name") }}</a>
+            <span>{{ index . "count" }}</span>
           </li>
         {{ end }}
-      {{ end }}
-    </ul>
-  </div>
+      </ul>
+    </div>
+  {{ end }}
 {{ end }}
 
 {{ if gt (len $posts) 0 }}
-  {{ $groups := ($posts | GroupByDate "January 2006") }}
+  {{ $groups := ($posts.GroupByDate "January 2006") }}
   <div class="widget">
     <div class="widget__title">{{ i18n "sidebar_archives" | default "Archives" }}</div>
     <ul class="widget__list">
@@ -88,17 +96,25 @@
 
 {{ $tags := index $site.Taxonomies "tags" }}
 {{ if $tags }}
-  <div class="widget widget--tags">
-    <div class="widget__title">{{ i18n "sidebar_tags" | default "Tags" }}</div>
-    <div class="tag-cloud">
-      {{ range $name, $pages := sort $tags "-Count" }}
-        {{ $localized := where $pages.Pages "Lang" $.Lang }}
-        {{ if gt (len $localized) 0 }}
-          <a href="{{ (index $localized 0).RelPermalink }}" data-count="{{ len $localized }}">#{{ $name }}</a>
+  {{ $tagItems := slice }}
+  {{ range $name, $taxonomy := $tags }}
+    {{ $localized := where $taxonomy.Pages "Lang" $.Lang }}
+    {{ if gt (len $localized) 0 }}
+      {{ $tagItems = append $tagItems (dict "name" $name "pages" $localized "count" (len $localized)) }}
+    {{ end }}
+  {{ end }}
+  {{ if gt (len $tagItems) 0 }}
+    {{ $tagItems = sort $tagItems "count" "desc" }}
+    <div class="widget widget--tags">
+      <div class="widget__title">{{ i18n "sidebar_tags" | default "Tags" }}</div>
+      <div class="tag-cloud">
+        {{ range $tagItems }}
+          {{ $pages := index . "pages" }}
+          <a href="{{ (index $pages 0).RelPermalink }}" data-count="{{ index . "count" }}">#{{ index . "name" }}</a>
         {{ end }}
-      {{ end }}
+      </div>
     </div>
-  </div>
+  {{ end }}
 {{ end }}
 
 {{ if gt (len $portfolio) 0 }}
